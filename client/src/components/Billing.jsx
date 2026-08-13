@@ -1,4 +1,4 @@
-import React, { useEffect, useEffectEvent, useMemo, useState } from 'react';
+import React, { useEffect, useEffectEvent, useMemo, useState } from "react";
 import {
   ClearOutlined,
   DeleteOutlined,
@@ -13,7 +13,7 @@ import {
   SearchOutlined,
   ShopOutlined,
   ShoppingCartOutlined,
-} from '@ant-design/icons';
+} from "@ant-design/icons";
 import {
   Button,
   Card,
@@ -33,13 +33,18 @@ import {
   Typography,
   message,
   theme as antdTheme,
-} from 'antd';
-import { useTheme } from '../context/useTheme';
-import { isRole, USER_ROLES } from '../utils/roles';
-const { Text } = Typography;
-const billingStyles = ".billing-page {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n  min-width: 0;\n  width: 100%;\n}\n\n.billing-layout {\n  display: grid;\n  grid-template-columns: minmax(0, 1.7fr) minmax(340px, 1fr);\n  gap: 18px;\n  align-items: start;\n}\n\n.billing-main {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n  min-width: 0;\n}\n\n.billing-page .ant-card {\n  background: var(--card);\n  border-color: var(--border);\n  border-radius: 8px;\n  box-shadow: 0 8px 24px var(--shadow-soft);\n}\n\n.billing-page .ant-card-body,\n.billing-page .ant-card-head,\n.billing-page .ant-typography {\n  color: var(--text) !important;\n}\n\n.billing-page .ant-card-head {\n  min-height: 52px;\n  padding: 0 20px;\n  border-bottom-color: var(--border);\n}\n\n.billing-page .ant-card-head-title {\n  color: var(--text);\n  font-weight: 800;\n}\n\n.billing-shop-copy {\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  margin-bottom: 16px;\n}\n\n.billing-form {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  gap: 0 14px;\n}\n\n.billing-form .ant-form-item:nth-last-child(-n + 2) {\n  grid-column: span 1;\n}\n\n.billing-page .ant-form-item {\n  margin-bottom: 14px;\n}\n\n.billing-page .ant-form-item-label > label {\n  color: var(--text) !important;\n  font-weight: 700;\n}\n\n.billing-bill-no-input,\n.billing-bill-no {\n  color: var(--accent) !important;\n  font-weight: 800;\n}\n\n.billing-cart-card {\n  overflow: hidden;\n}\n\n.billing-cart-card .ant-card-body {\n  padding: 0;\n}\n\n.billing-product-trigger {\n  margin: 16px;\n  width: calc(100% - 32px);\n}\n\n.billing-cart-card .ant-table,\n.billing-preview-table .ant-table {\n  background: transparent;\n  color: var(--text);\n  table-layout: fixed;\n}\n\n.billing-cart-card .ant-table-thead > tr > th,\n.billing-preview-table .ant-table-thead > tr > th {\n  background: var(--surface) !important;\n  color: var(--text2) !important;\n  border-bottom-color: var(--border);\n  font-weight: 800;\n  padding: 13px 22px;\n  vertical-align: middle;\n}\n\n.billing-cart-card .ant-table-thead > tr > th::before,\n.billing-preview-table .ant-table-thead > tr > th::before {\n  display: none !important;\n}\n\n.billing-cart-card .ant-table-tbody > tr > td,\n.billing-preview-table .ant-table-tbody > tr > td {\n  background: var(--card);\n  border-bottom-color: var(--border);\n  color: var(--text);\n  height: 58px;\n  padding: 10px 22px;\n  vertical-align: middle;\n}\n\n.billing-cart-card .ant-table-tbody > tr:hover > td,\n.billing-preview-table .ant-table-tbody > tr:hover > td {\n  background: var(--surface-hover) !important;\n}\n\n.billing-item-cell {\n  max-width: 100%;\n}\n\n.billing-item-name,\n.billing-money {\n  color: var(--text) !important;\n  display: block;\n  font-weight: 800;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.billing-money {\n  white-space: nowrap;\n}\n\n.billing-qty-control .ant-btn {\n  width: 34px;\n}\n\n.billing-qty-control .billing-qty-value {\n  width: 42px;\n  pointer-events: none;\n}\n\n.billing-totals {\n  display: grid;\n  gap: 6px;\n  margin: 16px;\n  padding: 14px;\n  border: 1px solid var(--border);\n  border-radius: 8px;\n  background: var(--surface);\n}\n\n.billing-total-row {\n  display: flex;\n  justify-content: space-between;\n  gap: 16px;\n  color: var(--text);\n  font-size: 0.9rem;\n}\n\n.billing-grand-row {\n  margin-top: 6px;\n  padding-top: 8px;\n  border-top: 1px solid var(--border);\n  color: var(--accent);\n  font-size: 1.12rem;\n  font-weight: 800;\n}\n\n.billing-actions {\n  margin: 0 16px 16px;\n}\n\n.billing-recent-card {\n  overflow: hidden;\n}\n\n.billing-recent-card .ant-card-body {\n  padding: 10px;\n}\n\n.billing-recent-card .ant-empty {\n  padding: 28px 0;\n}\n\n.billing-recent-list {\n  display: grid;\n  gap: 10px;\n}\n\n.billing-recent-item {\n  align-items: flex-start !important;\n  display: flex;\n  justify-content: space-between;\n  gap: 12px;\n  border: 1px solid var(--border) !important;\n  border-radius: 8px;\n  cursor: pointer;\n  margin-bottom: 10px;\n  padding: 12px !important;\n  transition: background 0.2s ease, border-color 0.2s ease;\n}\n\n.billing-recent-item:hover {\n  background: var(--surface-hover);\n  border-color: var(--accent3) !important;\n}\n\n.billing-recent-title,\n.billing-recent-copy {\n  width: 100%;\n}\n\n.billing-modal .ant-modal-content {\n  padding: 0 !important;\n  overflow: hidden;\n  border: 1px solid var(--border);\n  border-radius: 8px;\n}\n\n.billing-modal .ant-modal-header {\n  margin: 0;\n  padding: 20px 24px 12px;\n  border-bottom: 1px solid var(--border);\n}\n\n.billing-modal .ant-modal-body {\n  padding: 20px 24px;\n}\n\n.billing-modal .ant-modal-footer {\n  margin: 0;\n  padding: 16px 24px 20px;\n  border-top: 1px solid var(--border);\n}\n\n.billing-modal .ant-modal-title,\n.billing-modal .ant-typography {\n  color: var(--text) !important;\n}\n\n.billing-preview-meta {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  gap: 14px;\n  margin-bottom: 16px;\n  padding-bottom: 16px;\n  border-bottom: 1px solid var(--border);\n}\n\n.billing-preview-meta > div {\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  min-width: 0;\n}\n\n.billing-preview-totals {\n  margin: 16px 0 0;\n}\n\n.billing-product-search {\n  margin-bottom: 14px;\n}\n\n.billing-product-list {\n  max-height: min(56vh, 460px);\n  overflow: auto;\n  border: 1px solid var(--border);\n  border-radius: 8px;\n}\n\n.billing-product-row {\n  align-items: center !important;\n  cursor: pointer;\n  gap: 12px;\n  padding: 12px 14px !important;\n  transition: background 0.2s ease;\n}\n\n.billing-product-row.selected {\n  background: var(--surface-hover);\n  box-shadow: inset 4px 0 0 var(--accent);\n}\n\n.billing-product-row.disabled {\n  cursor: not-allowed;\n  opacity: 0.55;\n}\n\n.billing-product-info {\n  min-width: 0;\n}\n\n.billing-product-qty {\n  width: 80px;\n}\n\n.billing-selected-count {\n  display: block;\n  margin-top: 14px;\n}\n\n@media print {\n  body * {\n    visibility: hidden;\n  }\n\n  #printArea,\n  #printArea * {\n    visibility: visible;\n  }\n\n  #printArea {\n    position: absolute;\n    left: 0;\n    top: 0;\n    width: 80mm;\n    background: #fff;\n    color: #000;\n    font-family: monospace;\n    font-size: 10px;\n    padding: 4mm;\n  }\n\n  .no-print {\n    display: none !important;\n  }\n}\n\n#printArea {\n  display: none;\n}\n\n:root[data-theme='dark'] .billing-page .ant-card {\n  background: #1b2433;\n  border-color: #334155;\n  box-shadow: none;\n}\n\n:root[data-theme='dark'] .billing-page,\n:root[data-theme='dark'] .billing-page .ant-card-body,\n:root[data-theme='dark'] .billing-page .ant-card-head,\n:root[data-theme='dark'] .billing-page .ant-card-head-title,\n:root[data-theme='dark'] .billing-page .ant-typography,\n:root[data-theme='dark'] .billing-item-name,\n:root[data-theme='dark'] .billing-money {\n  color: #f8fafc !important;\n}\n\n:root[data-theme='dark'] .billing-cart-card .ant-table,\n:root[data-theme='dark'] .billing-cart-card .ant-table-container,\n:root[data-theme='dark'] .billing-cart-card .ant-table-content,\n:root[data-theme='dark'] .billing-preview-table .ant-table,\n:root[data-theme='dark'] .billing-preview-table .ant-table-container,\n:root[data-theme='dark'] .billing-preview-table .ant-table-content {\n  background: #1b2433 !important;\n}\n\n:root[data-theme='dark'] .billing-cart-card .ant-table-thead > tr > th,\n:root[data-theme='dark'] .billing-preview-table .ant-table-thead > tr > th {\n  background: #111827 !important;\n  color: #e5e7eb !important;\n  border-bottom-color: #334155 !important;\n}\n\n:root[data-theme='dark'] .billing-cart-card .ant-table-tbody > tr > td,\n:root[data-theme='dark'] .billing-preview-table .ant-table-tbody > tr > td {\n  background: #1b2433 !important;\n  border-bottom-color: #334155 !important;\n  color: #f8fafc !important;\n}\n\n:root[data-theme='dark'] .billing-cart-card .ant-table-tbody > tr:hover > td,\n:root[data-theme='dark'] .billing-preview-table .ant-table-tbody > tr:hover > td {\n  background: #263244 !important;\n}\n\nhtml[data-theme='dark'] body .billing-modal .ant-modal-content,\nhtml[data-theme='dark'] body .billing-modal .ant-modal-header,\nhtml[data-theme='dark'] body .billing-modal .ant-modal-body,\nhtml[data-theme='dark'] body .billing-modal .ant-modal-footer {\n  background-color: #1b2433 !important;\n  border-color: #334155 !important;\n}\n\nhtml[data-theme='dark'] body .billing-modal .ant-modal-title,\nhtml[data-theme='dark'] body .billing-modal .ant-typography {\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .billing-modal .ant-modal-close,\nhtml[data-theme='dark'] body .billing-modal .ant-modal-close-x {\n  color: #cbd5e1 !important;\n}\n\nhtml[data-theme='dark'] body .billing-page .ant-input,\nhtml[data-theme='dark'] body .billing-page .ant-input-number,\nhtml[data-theme='dark'] body .billing-page .ant-input-number-input,\nhtml[data-theme='dark'] body .billing-page .ant-select-selector,\nhtml[data-theme='dark'] body .billing-modal .ant-input,\nhtml[data-theme='dark'] body .billing-modal .ant-input-number,\nhtml[data-theme='dark'] body .billing-modal .ant-input-number-input {\n  background-color: #111827 !important;\n  color: #f8fafc !important;\n  border-color: #334155 !important;\n}\n\nhtml[data-theme='dark'] body .billing-page .ant-input::placeholder,\nhtml[data-theme='dark'] body .billing-modal .ant-input::placeholder {\n  color: #94a3b8 !important;\n}\n\n@media (max-width: 1100px) {\n  .billing-layout {\n    grid-template-columns: 1fr;\n  }\n}\n\n@media (max-width: 760px) {\n  .billing-form,\n  .billing-preview-meta {\n    grid-template-columns: 1fr;\n  }\n\n  .billing-page .ant-card-head {\n    padding: 0 14px;\n  }\n\n  .billing-product-row {\n    align-items: flex-start !important;\n    flex-direction: column;\n  }\n}";
+} from "antd";
+import { useTheme } from "../context/useTheme";
+import { isRole, USER_ROLES } from "../utils/roles";
 
-if (typeof document !== "undefined" && !document.getElementById("combined-billing-styles")) {
+const { Text } = Typography;
+const billingStyles =
+  ".billing-page {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n  min-width: 0;\n  width: 100%;\n}\n\n.billing-layout {\n  display: grid;\n  grid-template-columns: minmax(0, 1.7fr) minmax(340px, 1fr);\n  gap: 18px;\n  align-items: start;\n}\n\n.billing-main {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n  min-width: 0;\n}\n\n.billing-page .ant-card {\n  background: var(--card);\n  border-color: var(--border);\n  border-radius: 8px;\n  box-shadow: 0 8px 24px var(--shadow-soft);\n}\n\n.billing-page .ant-card-body,\n.billing-page .ant-card-head,\n.billing-page .ant-typography {\n  color: var(--text) !important;\n}\n\n.billing-page .ant-card-head {\n  min-height: 52px;\n  padding: 0 20px;\n  border-bottom-color: var(--border);\n}\n\n.billing-page .ant-card-head-title {\n  color: var(--text);\n  font-weight: 800;\n}\n\n.billing-shop-copy {\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  margin-bottom: 16px;\n}\n\n.billing-form {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  gap: 0 14px;\n}\n\n.billing-form .ant-form-item:nth-last-child(-n + 2) {\n  grid-column: span 1;\n}\n\n.billing-page .ant-form-item {\n  margin-bottom: 14px;\n}\n\n.billing-page .ant-form-item-label > label {\n  color: var(--text) !important;\n  font-weight: 700;\n}\n\n.billing-bill-no-input,\n.billing-bill-no {\n  color: var(--accent) !important;\n  font-weight: 800;\n}\n\n.billing-cart-card {\n  overflow: hidden;\n}\n\n.billing-cart-card .ant-card-body {\n  padding: 0;\n}\n\n.billing-product-trigger {\n  margin: 16px;\n  width: calc(100% - 32px);\n}\n\n.billing-cart-card .ant-table,\n.billing-preview-table .ant-table {\n  background: transparent;\n  color: var(--text);\n  table-layout: fixed;\n}\n\n.billing-cart-card .ant-table-thead > tr > th,\n.billing-preview-table .ant-table-thead > tr > th {\n  background: var(--surface) !important;\n  color: var(--text2) !important;\n  border-bottom-color: var(--border);\n  font-weight: 800;\n  padding: 13px 22px;\n  vertical-align: middle;\n}\n\n.billing-cart-card .ant-table-thead > tr > th::before,\n.billing-preview-table .ant-table-thead > tr > th::before {\n  display: none !important;\n}\n\n.billing-cart-card .ant-table-tbody > tr > td,\n.billing-preview-table .ant-table-tbody > tr > td {\n  background: var(--card);\n  border-bottom-color: var(--border);\n  color: var(--text);\n  height: 58px;\n  padding: 10px 22px;\n  vertical-align: middle;\n}\n\n.billing-cart-card .ant-table-tbody > tr:hover > td,\n.billing-preview-table .ant-table-tbody > tr:hover > td {\n  background: var(--surface-hover) !important;\n}\n\n.billing-item-cell {\n  max-width: 100%;\n}\n\n.billing-item-name,\n.billing-money {\n  color: var(--text) !important;\n  display: block;\n  font-weight: 800;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.billing-money {\n  white-space: nowrap;\n}\n\n.billing-qty-control .ant-btn {\n  width: 34px;\n}\n\n.billing-qty-control .billing-qty-value {\n  width: 42px;\n  pointer-events: none;\n}\n\n.billing-totals {\n  display: grid;\n  gap: 6px;\n  margin: 16px;\n  padding: 14px;\n  border: 1px solid var(--border);\n  border-radius: 8px;\n  background: var(--surface);\n}\n\n.billing-total-row {\n  display: flex;\n  justify-content: space-between;\n  gap: 16px;\n  color: var(--text);\n  font-size: 0.9rem;\n}\n\n.billing-grand-row {\n  margin-top: 6px;\n  padding-top: 8px;\n  border-top: 1px solid var(--border);\n  color: var(--accent);\n  font-size: 1.12rem;\n  font-weight: 800;\n}\n\n.billing-actions {\n  margin: 0 16px 16px;\n}\n\n.billing-recent-card {\n  overflow: hidden;\n}\n\n.billing-recent-card .ant-card-body {\n  padding: 10px;\n}\n\n.billing-recent-card .ant-empty {\n  padding: 28px 0;\n}\n\n.billing-recent-list {\n  display: grid;\n  gap: 10px;\n}\n\n.billing-recent-item {\n  align-items: flex-start !important;\n  display: flex;\n  justify-content: space-between;\n  gap: 12px;\n  border: 1px solid var(--border) !important;\n  border-radius: 8px;\n  cursor: pointer;\n  margin-bottom: 10px;\n  padding: 12px !important;\n  transition: background 0.2s ease, border-color 0.2s ease;\n}\n\n.billing-recent-item:hover {\n  background: var(--surface-hover);\n  border-color: var(--accent3) !important;\n}\n\n.billing-recent-title,\n.billing-recent-copy {\n  width: 100%;\n}\n\n.billing-modal .ant-modal-content {\n  padding: 0 !important;\n  overflow: hidden;\n  border: 1px solid var(--border);\n  border-radius: 8px;\n}\n\n.billing-modal .ant-modal-header {\n  margin: 0;\n  padding: 20px 24px 12px;\n  border-bottom: 1px solid var(--border);\n}\n\n.billing-modal .ant-modal-body {\n  padding: 20px 24px;\n}\n\n.billing-modal .ant-modal-footer {\n  margin: 0;\n  padding: 16px 24px 20px;\n  border-top: 1px solid var(--border);\n}\n\n.billing-modal .ant-modal-title,\n.billing-modal .ant-typography {\n  color: var(--text) !important;\n}\n\n.billing-preview-meta {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  gap: 14px;\n  margin-bottom: 16px;\n  padding-bottom: 16px;\n  border-bottom: 1px solid var(--border);\n}\n\n.billing-preview-meta > div {\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  min-width: 0;\n}\n\n.billing-preview-totals {\n  margin: 16px 0 0;\n}\n\n.billing-product-search {\n  margin-bottom: 14px;\n}\n\n.billing-product-list {\n  max-height: min(56vh, 460px);\n  overflow: auto;\n  border: 1px solid var(--border);\n  border-radius: 8px;\n}\n\n.billing-product-row {\n  align-items: center !important;\n  cursor: pointer;\n  gap: 12px;\n  padding: 12px 14px !important;\n  transition: background 0.2s ease;\n}\n\n.billing-product-row.selected {\n  background: var(--surface-hover);\n  box-shadow: inset 4px 0 0 var(--accent);\n}\n\n.billing-product-row.disabled {\n  cursor: not-allowed;\n  opacity: 0.55;\n}\n\n.billing-product-info {\n  min-width: 0;\n}\n\n.billing-product-qty {\n  width: 80px;\n}\n\n.billing-selected-count {\n  display: block;\n  margin-top: 14px;\n}\n\n@media print {\n  body * {\n    visibility: hidden;\n  }\n\n  #printArea,\n  #printArea * {\n    visibility: visible;\n  }\n\n  #printArea {\n    position: absolute;\n    left: 0;\n    top: 0;\n    width: 80mm;\n    background: #fff;\n    color: #000;\n    font-family: monospace;\n    font-size: 10px;\n    padding: 4mm;\n  }\n\n  .no-print {\n    display: none !important;\n  }\n}\n\n#printArea {\n  display: none;\n}\n\n:root[data-theme='dark'] .billing-page .ant-card {\n  background: #1b2433;\n  border-color: #334155;\n  box-shadow: none;\n}\n\n:root[data-theme='dark'] .billing-page,\n:root[data-theme='dark'] .billing-page .ant-card-body,\n:root[data-theme='dark'] .billing-page .ant-card-head,\n:root[data-theme='dark'] .billing-page .ant-card-head-title,\n:root[data-theme='dark'] .billing-page .ant-typography,\n:root[data-theme='dark'] .billing-item-name,\n:root[data-theme='dark'] .billing-money {\n  color: #f8fafc !important;\n}\n\n:root[data-theme='dark'] .billing-cart-card .ant-table,\n:root[data-theme='dark'] .billing-cart-card .ant-table-container,\n:root[data-theme='dark'] .billing-cart-card .ant-table-content,\n:root[data-theme='dark'] .billing-preview-table .ant-table,\n:root[data-theme='dark'] .billing-preview-table .ant-table-container,\n:root[data-theme='dark'] .billing-preview-table .ant-table-content {\n  background: #1b2433 !important;\n}\n\n:root[data-theme='dark'] .billing-cart-card .ant-table-thead > tr > th,\n:root[data-theme='dark'] .billing-preview-table .ant-table-thead > tr > th {\n  background: #111827 !important;\n  color: #e5e7eb !important;\n  border-bottom-color: #334155 !important;\n}\n\n:root[data-theme='dark'] .billing-cart-card .ant-table-tbody > tr > td,\n:root[data-theme='dark'] .billing-preview-table .ant-table-tbody > tr > td {\n  background: #1b2433 !important;\n  border-bottom-color: #334155 !important;\n  color: #f8fafc !important;\n}\n\n:root[data-theme='dark'] .billing-cart-card .ant-table-tbody > tr:hover > td,\n:root[data-theme='dark'] .billing-preview-table .ant-table-tbody > tr:hover > td {\n  background: #263244 !important;\n}\n\nhtml[data-theme='dark'] body .billing-modal .ant-modal-content,\nhtml[data-theme='dark'] body .billing-modal .ant-modal-header,\nhtml[data-theme='dark'] body .billing-modal .ant-modal-body,\nhtml[data-theme='dark'] body .billing-modal .ant-modal-footer {\n  background-color: #1b2433 !important;\n  border-color: #334155 !important;\n}\n\nhtml[data-theme='dark'] body .billing-modal .ant-modal-title,\nhtml[data-theme='dark'] body .billing-modal .ant-typography {\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .billing-modal .ant-modal-close,\nhtml[data-theme='dark'] body .billing-modal .ant-modal-close-x {\n  color: #cbd5e1 !important;\n}\n\nhtml[data-theme='dark'] body .billing-page .ant-input,\nhtml[data-theme='dark'] body .billing-page .ant-input-number,\nhtml[data-theme='dark'] body .billing-page .ant-input-number-input,\nhtml[data-theme='dark'] body .billing-page .ant-select-selector,\nhtml[data-theme='dark'] body .billing-modal .ant-input,\nhtml[data-theme='dark'] body .billing-modal .ant-input-number,\nhtml[data-theme='dark'] body .billing-modal .ant-input-number-input {\n  background-color: #111827 !important;\n  color: #f8fafc !important;\n  border-color: #334155 !important;\n}\n\nhtml[data-theme='dark'] body .billing-page .ant-input::placeholder,\nhtml[data-theme='dark'] body .billing-modal .ant-input::placeholder {\n  color: #94a3b8 !important;\n}\n\n@media (max-width: 1100px) {\n  .billing-layout {\n    grid-template-columns: 1fr;\n  }\n}\n\n@media (max-width: 760px) {\n  .billing-form,\n  .billing-preview-meta {\n    grid-template-columns: 1fr;\n  }\n\n  .billing-page .ant-card-head {\n    padding: 0 14px;\n  }\n\n  .billing-product-row {\n    align-items: flex-start !important;\n    flex-direction: column;\n  }\n}";
+
+if (
+  typeof document !== "undefined" &&
+  !document.getElementById("combined-billing-styles")
+) {
   const style = document.createElement("style");
   style.id = "combined-billing-styles";
   style.textContent = billingStyles;
@@ -93,7 +98,10 @@ const billingProductModalFixStyles = `
 }
 `;
 
-if (typeof document !== "undefined" && !document.getElementById("billing-product-modal-fix-styles")) {
+if (
+  typeof document !== "undefined" &&
+  !document.getElementById("billing-product-modal-fix-styles")
+) {
   const style = document.createElement("style");
   style.id = "billing-product-modal-fix-styles";
   style.textContent = billingProductModalFixStyles;
@@ -150,7 +158,10 @@ const billingActionsMobileStyles = `
 }
 `;
 
-if (typeof document !== "undefined" && !document.getElementById("billing-actions-mobile-styles")) {
+if (
+  typeof document !== "undefined" &&
+  !document.getElementById("billing-actions-mobile-styles")
+) {
   const style = document.createElement("style");
   style.id = "billing-actions-mobile-styles";
   style.textContent = billingActionsMobileStyles;
@@ -169,7 +180,12 @@ const clampBillingQty = (value, maxQty) => {
   return Math.max(1, Math.min(safeMaxQty, parsedQty));
 };
 const isSameUserName = (left, right) =>
-  String(left || '').trim().toLowerCase() === String(right || '').trim().toLowerCase();
+  String(left || "")
+    .trim()
+    .toLowerCase() ===
+  String(right || "")
+    .trim()
+    .toLowerCase();
 
 export default function Billing({ erp, user }) {
   const { effectiveTheme } = useTheme();
@@ -177,16 +193,16 @@ export default function Billing({ erp, user }) {
   const [viewBill, setViewBill] = useState(null);
   const [isReviewMode, setIsReviewMode] = useState(false);
   const [showProductPopup, setShowProductPopup] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [qty, setQty] = useState(1);
   const [selectedProducts, setSelectedProducts] = useState({});
-  const [customer, setCustomer] = useState('');
-  const [phone, setPhone] = useState('');
-  const [payment, setPayment] = useState('Cash');
+  const [customer, setCustomer] = useState("");
+  const [phone, setPhone] = useState("");
+  const [payment, setPayment] = useState("Cash");
   const [hiddenRecentBillIds, setHiddenRecentBillIds] = useState([]);
 
   const { db, addBill } = erp;
-  const isDarkTheme = effectiveTheme === 'dark';
+  const isDarkTheme = effectiveTheme === "dark";
   const billingAntTheme = useMemo(
     () => ({
       algorithm: isDarkTheme
@@ -194,43 +210,43 @@ export default function Billing({ erp, user }) {
         : antdTheme.defaultAlgorithm,
       token: {
         borderRadius: 6,
-        colorPrimary: '#d95b3d',
-        colorBgBase: isDarkTheme ? '#111827' : '#ffffff',
-        colorBgContainer: isDarkTheme ? '#1b2433' : '#ffffff',
-        colorBgElevated: isDarkTheme ? '#111827' : '#ffffff',
-        colorBorder: isDarkTheme ? '#334155' : '#e2e5ea',
-        colorText: isDarkTheme ? '#f8fafc' : '#1a1f2e',
-        colorTextSecondary: isDarkTheme ? '#cbd5e1' : '#5a6278',
+        colorPrimary: "#d95b3d",
+        colorBgBase: isDarkTheme ? "#111827" : "#ffffff",
+        colorBgContainer: isDarkTheme ? "#1b2433" : "#ffffff",
+        colorBgElevated: isDarkTheme ? "#111827" : "#ffffff",
+        colorBorder: isDarkTheme ? "#334155" : "#e2e5ea",
+        colorText: isDarkTheme ? "#f8fafc" : "#1a1f2e",
+        colorTextSecondary: isDarkTheme ? "#cbd5e1" : "#5a6278",
       },
       components: {
         Button: {
-          defaultBg: isDarkTheme ? '#111827' : '#ffffff',
-          defaultBorderColor: isDarkTheme ? '#334155' : '#d9d9d9',
-          defaultColor: isDarkTheme ? '#f8fafc' : '#1a1f2e',
+          defaultBg: isDarkTheme ? "#111827" : "#ffffff",
+          defaultBorderColor: isDarkTheme ? "#334155" : "#d9d9d9",
+          defaultColor: isDarkTheme ? "#f8fafc" : "#1a1f2e",
         },
         Card: {
-          colorBgContainer: isDarkTheme ? '#1b2433' : '#ffffff',
+          colorBgContainer: isDarkTheme ? "#1b2433" : "#ffffff",
         },
         Input: {
-          activeBg: isDarkTheme ? '#111827' : '#ffffff',
-          colorBgContainer: isDarkTheme ? '#111827' : '#ffffff',
+          activeBg: isDarkTheme ? "#111827" : "#ffffff",
+          colorBgContainer: isDarkTheme ? "#111827" : "#ffffff",
         },
         InputNumber: {
-          activeBg: isDarkTheme ? '#111827' : '#ffffff',
-          colorBgContainer: isDarkTheme ? '#111827' : '#ffffff',
+          activeBg: isDarkTheme ? "#111827" : "#ffffff",
+          colorBgContainer: isDarkTheme ? "#111827" : "#ffffff",
         },
         Modal: {
-          contentBg: isDarkTheme ? '#1b2433' : '#ffffff',
-          footerBg: isDarkTheme ? '#1b2433' : '#ffffff',
-          headerBg: isDarkTheme ? '#1b2433' : '#ffffff',
+          contentBg: isDarkTheme ? "#1b2433" : "#ffffff",
+          footerBg: isDarkTheme ? "#1b2433" : "#ffffff",
+          headerBg: isDarkTheme ? "#1b2433" : "#ffffff",
         },
         Select: {
-          optionSelectedBg: isDarkTheme ? '#263244' : '#e6f4ff',
-          selectorBg: isDarkTheme ? '#111827' : '#ffffff',
+          optionSelectedBg: isDarkTheme ? "#263244" : "#e6f4ff",
+          selectorBg: isDarkTheme ? "#111827" : "#ffffff",
         },
         Table: {
-          headerBg: isDarkTheme ? '#111827' : '#f4f6f9',
-          rowHoverBg: isDarkTheme ? '#263244' : '#fafafa',
+          headerBg: isDarkTheme ? "#111827" : "#f4f6f9",
+          rowHoverBg: isDarkTheme ? "#263244" : "#fafafa",
         },
       },
     }),
@@ -248,17 +264,17 @@ export default function Billing({ erp, user }) {
     };
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
+      if (document.visibilityState === "visible") {
         syncBillingData();
       }
     };
 
-    window.addEventListener('focus', handleWindowFocus);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener("focus", handleWindowFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      window.removeEventListener('focus', handleWindowFocus);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener("focus", handleWindowFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
 
@@ -266,7 +282,9 @@ export default function Billing({ erp, user }) {
     const bills = Array.isArray(sourceBills) ? sourceBills : [];
     const maxSeq = bills
       .map((bill) => {
-        const match = String(bill.billNo || bill.bill_no || '').match(/SNT-(\d+)/i);
+        const match = String(bill.billNo || bill.bill_no || "").match(
+          /SNT-(\d+)/i,
+        );
         return match ? Number(match[1]) : 0;
       })
       .filter((value) => Number.isFinite(value))
@@ -277,8 +295,8 @@ export default function Billing({ erp, user }) {
 
   const nextBillSeq = getNextBillSeq(db.bills);
 
-  const showToast = (msg, type = 'success') => {
-    if (type === 'error') {
+  const showToast = (msg, type = "success") => {
+    if (type === "error") {
       message.error(msg);
       return;
     }
@@ -288,7 +306,7 @@ export default function Billing({ erp, user }) {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         setViewBill(null);
         setIsReviewMode(false);
         setShowProductPopup(false);
@@ -296,37 +314,40 @@ export default function Billing({ erp, user }) {
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   const normalizedSearch = searchTerm.trim().toLowerCase();
   const products = Array.isArray(db.products) ? db.products : [];
   const getProductStock = (product) => Number(product?.stock || 0);
-  const getCartQtyForProduct = (productId, skipIndex = -1) => (
+  const getCartQtyForProduct = (productId, skipIndex = -1) =>
     items.reduce((sum, item, index) => {
       if (index === skipIndex || String(item.id) !== String(productId)) {
         return sum;
       }
       return sum + Number(item.qty || 0);
-    }, 0)
-  );
-  const getRemainingStockForCart = (product, skipIndex = -1) => (
-    Math.max(0, getProductStock(product) - getCartQtyForProduct(product?.id, skipIndex))
-  );
+    }, 0);
+  const getRemainingStockForCart = (product, skipIndex = -1) =>
+    Math.max(
+      0,
+      getProductStock(product) - getCartQtyForProduct(product?.id, skipIndex),
+    );
   const getMaxQtyForCartItem = (item, index) => {
     const product = products.find((p) => String(p.id) === String(item.id));
     return getRemainingStockForCart(product || item, index);
   };
-  const availableProductCount = products.filter((product) => getProductStock(product) > 0).length;
+  const availableProductCount = products.filter(
+    (product) => getProductStock(product) > 0,
+  ).length;
   const popupProducts = (Array.isArray(db.products) ? db.products : [])
     .filter((product) => {
       if (!normalizedSearch) {
         return true;
       }
 
-      const name = String(product.name || '').toLowerCase();
-      const code = String(product.code || '').toLowerCase();
+      const name = String(product.name || "").toLowerCase();
+      const code = String(product.code || "").toLowerCase();
       return name.includes(normalizedSearch) || code.includes(normalizedSearch);
     })
     .slice(0, 80);
@@ -336,14 +357,14 @@ export default function Billing({ erp, user }) {
     try {
       await erp.fetchProducts(true);
     } catch (error) {
-      showToast(error.message || 'Failed to fetch latest stock', 'error');
+      showToast(error.message || "Failed to fetch latest stock", "error");
     }
   };
 
   const toggleProductSelection = (product) => {
     const remainingStock = getRemainingStockForCart(product);
     if (remainingStock <= 0) {
-      showToast(`${product.name} is out of stock.`, 'error');
+      showToast(`${product.name} is out of stock.`, "error");
       return;
     }
 
@@ -364,13 +385,19 @@ export default function Billing({ erp, user }) {
       const product = db.products.find((p) => String(p.id) === String(prodId));
       if (product) {
         const remainingStock = getRemainingStockForCart(product);
-        const parsedQty = clampBillingQty(selectedProducts[prodId], remainingStock);
+        const parsedQty = clampBillingQty(
+          selectedProducts[prodId],
+          remainingStock,
+        );
         if (remainingStock <= 0) {
-          showToast(`${product.name} is out of stock.`, 'error');
+          showToast(`${product.name} is out of stock.`, "error");
           return;
         }
         if (parsedQty > remainingStock) {
-          showToast(`Only ${remainingStock} item(s) are available in stock.`, 'error');
+          showToast(
+            `Only ${remainingStock} item(s) are available in stock.`,
+            "error",
+          );
           return;
         }
         newItems.push({
@@ -379,7 +406,7 @@ export default function Billing({ erp, user }) {
           name: product.name,
           qty: parsedQty,
           price: product.price,
-          total: product.price * parsedQty
+          total: product.price * parsedQty,
         });
       }
     }
@@ -389,7 +416,7 @@ export default function Billing({ erp, user }) {
       showToast(`${newItems.length} products added to cart`);
     }
     setSelectedProducts({});
-    setSearchTerm('');
+    setSearchTerm("");
     setQty(1);
     setShowProductPopup(false);
   };
@@ -399,23 +426,28 @@ export default function Billing({ erp, user }) {
   };
 
   const changeItemQty = (index, delta) => {
-    setItems((prevItems) => prevItems.map((item, currentIndex) => {
-      if (currentIndex !== index) {
-        return item;
-      }
+    setItems((prevItems) =>
+      prevItems.map((item, currentIndex) => {
+        if (currentIndex !== index) {
+          return item;
+        }
 
-      const product = products.find((p) => String(p.id) === String(item.id));
-      const maxQty = getRemainingStockForCart(product || item, currentIndex);
-      const nextQty = Math.max(1, Math.min(maxQty, Number(item.qty || 1) + delta));
-      if (delta > 0 && nextQty === Number(item.qty || 1)) {
-        showToast(`Only ${maxQty} item(s) are available in stock.`, 'error');
-      }
-      return {
-        ...item,
-        qty: nextQty,
-        total: Number(item.price || 0) * nextQty
-      };
-    }));
+        const product = products.find((p) => String(p.id) === String(item.id));
+        const maxQty = getRemainingStockForCart(product || item, currentIndex);
+        const nextQty = Math.max(
+          1,
+          Math.min(maxQty, Number(item.qty || 1) + delta),
+        );
+        if (delta > 0 && nextQty === Number(item.qty || 1)) {
+          showToast(`Only ${maxQty} item(s) are available in stock.`, "error");
+        }
+        return {
+          ...item,
+          qty: nextQty,
+          total: Number(item.price || 0) * nextQty,
+        };
+      }),
+    );
   };
 
   const subtotal = items.reduce((sum, item) => sum + item.total, 0);
@@ -479,8 +511,8 @@ export default function Billing({ erp, user }) {
     <div class="invoice-title">TAX INVOICE</div>
     <div class="top-row">
       <div class="license-block">
-        <div>GSTIN : ${settings.gstin || '-'}</div>
-        <div>FSSAI License No : ${settings.fssai || '-'}</div>
+        <div>GSTIN : ${settings.gstin || "-"}</div>
+        <div>FSSAI License No : ${settings.fssai || "-"}</div>
       </div>
       <div class="date-block">
         <div class="date-line"><b>Date:</b> ${printedAt}</div>
@@ -491,7 +523,7 @@ export default function Billing({ erp, user }) {
     <div class="shop-address">${settings.addr}</div>
     <div class="to-line">
       <div class="to-line-label">To</div>
-      <div class="to-line-value">${billData.customer || ''}</div>
+      <div class="to-line-value">${billData.customer || ""}</div>
     </div>
     <table>
       <tr>
@@ -502,23 +534,23 @@ export default function Billing({ erp, user }) {
       </tr>
       <tr>
         <td class="money">
-          ${billItems.map((item) => `<div class="item-line">${Number(item.price || 0).toFixed(2)}</div>`).join('')}
+          ${billItems.map((item) => `<div class="item-line">${Number(item.price || 0).toFixed(2)}</div>`).join("")}
         </td>
         <td class="item-cell">
-          ${billItems.map((item) => `<div class="item-line">${item.name}</div>`).join('')}
+          ${billItems.map((item) => `<div class="item-line">${item.name}</div>`).join("")}
         </td>
         <td class="qty-cell">
-          ${billItems.map((item) => `<div class="item-line">${item.qty}</div>`).join('')}
+          ${billItems.map((item) => `<div class="item-line">${item.qty}</div>`).join("")}
         </td>
         <td class="money">
-          ${billItems.map((item) => `<div class="item-line">${Number(item.total || 0).toFixed(2)}</div>`).join('')}
+          ${billItems.map((item) => `<div class="item-line">${Number(item.total || 0).toFixed(2)}</div>`).join("")}
         </td>
       </tr>
     </table>
     <div class="summary-wrap">
       <div class="summary-left">E & O.E.</div>
       <div class="summary-right">
-        <div class="summary-row"><span>Bill No</span><span>${billData.billNo || ''}</span></div>
+        <div class="summary-row"><span>Bill No</span><span>${billData.billNo || ""}</span></div>
         <div class="summary-row"><span>Subtotal</span><span>${Number(billData.subtotal || 0).toFixed(2)}</span></div>
         <div class="summary-row"><span>CGST</span><span>${Number(billData.cgst || 0).toFixed(2)}</span></div>
         <div class="summary-row"><span>SGST</span><span>${Number(billData.sgst || 0).toFixed(2)}</span></div>
@@ -526,7 +558,7 @@ export default function Billing({ erp, user }) {
       </div>
     </div>
     <div class="footer-row">
-      <div class="footer-left">${billData.payment || ''}</div>
+      <div class="footer-left">${billData.payment || ""}</div>
       <div class="footer-right">
         <div class="signature-space"></div>
         <div>For ${settings.shop}</div>
@@ -536,30 +568,35 @@ export default function Billing({ erp, user }) {
 </body>
 </html>`;
 
-    const printWindow = window.open('', '_blank', 'width=400,height=600');
+    const printWindow = window.open("", "_blank", "width=400,height=600");
     printWindow.document.write(html);
     printWindow.document.close();
   };
 
   const handleSaveBill = async () => {
-    if (items.length === 0) return showToast('Cart is empty!', 'error');
-    if (!customer.trim()) return showToast('Please enter Customer Name!', 'error');
-    if (!phone.trim() || phone.length < 10) return showToast('Valid Mobile Number is required!', 'error');
+    if (items.length === 0) return showToast("Cart is empty!", "error");
+    if (!customer.trim())
+      return showToast("Please enter Customer Name!", "error");
+    if (!phone.trim() || phone.length < 10)
+      return showToast("Valid Mobile Number is required!", "error");
     const nextSeq = getNextBillSeq(db.bills);
 
     for (const item of items) {
       const product = products.find((p) => String(p.id) === String(item.id));
       const availableStock = getProductStock(product);
       if (!product || availableStock <= 0) {
-        return showToast(`${item.name} is out of stock.`, 'error');
+        return showToast(`${item.name} is out of stock.`, "error");
       }
       if (Number(item.qty || 0) > availableStock) {
-        return showToast(`Only ${availableStock} item(s) are available in stock.`, 'error');
+        return showToast(
+          `Only ${availableStock} item(s) are available in stock.`,
+          "error",
+        );
       }
     }
 
     const bill = {
-      billNo: `SNT-${String(nextSeq).padStart(4, '0')}`,
+      billNo: `SNT-${String(nextSeq).padStart(4, "0")}`,
       date: new Date().toISOString(),
       customer,
       phone,
@@ -569,48 +606,30 @@ export default function Billing({ erp, user }) {
       cgst: gstAmt / 2,
       sgst: gstAmt / 2,
       grand: grandTotal,
-      by: user.user
+      by: user.user,
     };
 
     try {
       await addBill(bill);
-      showToast('Bill Saved Successfully!');
+      showToast("Bill Saved Successfully!");
       setItems([]);
-      setCustomer('');
-      setPhone('');
-      setPayment('Cash');
+      setCustomer("");
+      setPhone("");
+      setPayment("Cash");
     } catch (error) {
-      showToast(error.message || 'Failed to save bill', 'error');
+      showToast(error.message || "Failed to save bill", "error");
     }
   };
 
   const printBill = () => {
-    if (items.length === 0) return showToast('No items to print!', 'error');
-    if (!customer.trim()) return showToast('Please enter Customer Name!', 'error');
-    if (!phone.trim() || phone.length < 10) return showToast('Valid Mobile Number is required!', 'error');
+    if (items.length === 0) return showToast("No items to print!", "error");
+    if (!customer.trim())
+      return showToast("Please enter Customer Name!", "error");
+    if (!phone.trim() || phone.length < 10)
+      return showToast("Valid Mobile Number is required!", "error");
     const nextSeq = getNextBillSeq(db.bills);
     openBillPrintWindow({
-      billNo: `SNT-${String(nextSeq).padStart(4, '0')}`,
-      date: new Date().toISOString(),
-      customer,
-      phone,
-      payment,
-      items,
-      subtotal: netSubtotal,
-      cgst: gstAmt / 2,
-      sgst: gstAmt / 2,
-      grand: grandTotal
-    });
-  };
-
-  const reviewBill = () => {
-    if (items.length === 0) return showToast('No items to review!', 'error');
-    if (!customer.trim()) return showToast('Please enter Customer Name!', 'error');
-    if (!phone.trim() || phone.length < 10) return showToast('Valid Mobile Number is required!', 'error');
-    const nextSeq = getNextBillSeq(db.bills);
-
-    setViewBill({
-      billNo: `SNT-${String(nextSeq).padStart(4, '0')}`,
+      billNo: `SNT-${String(nextSeq).padStart(4, "0")}`,
       date: new Date().toISOString(),
       customer,
       phone,
@@ -620,51 +639,83 @@ export default function Billing({ erp, user }) {
       cgst: gstAmt / 2,
       sgst: gstAmt / 2,
       grand: grandTotal,
-      by: user.user
+    });
+  };
+
+  const reviewBill = () => {
+    if (items.length === 0) return showToast("No items to review!", "error");
+    if (!customer.trim())
+      return showToast("Please enter Customer Name!", "error");
+    if (!phone.trim() || phone.length < 10)
+      return showToast("Valid Mobile Number is required!", "error");
+    const nextSeq = getNextBillSeq(db.bills);
+
+    setViewBill({
+      billNo: `SNT-${String(nextSeq).padStart(4, "0")}`,
+      date: new Date().toISOString(),
+      customer,
+      phone,
+      payment,
+      items,
+      subtotal: netSubtotal,
+      cgst: gstAmt / 2,
+      sgst: gstAmt / 2,
+      grand: grandTotal,
+      by: user.user,
     });
     setIsReviewMode(true);
   };
 
   const isAdmin = isRole(user, USER_ROLES.ADMIN);
   const hideRecentBill = (billId) => {
-    setHiddenRecentBillIds((prev) => (
-      prev.includes(billId) ? prev : [...prev, billId]
-    ));
+    setHiddenRecentBillIds((prev) =>
+      prev.includes(billId) ? prev : [...prev, billId],
+    );
     if (viewBill?.id === billId) {
       setViewBill(null);
       setIsReviewMode(false);
     }
-    showToast('Removed from recent list');
+    showToast("Removed from recent list");
   };
   const findCustomerByPhone = (value) => {
-    const digits = String(value || '').replace(/\D/g, '');
+    const digits = String(value || "").replace(/\D/g, "");
     if (digits.length !== 10) {
       return null;
     }
 
     // First check the customers table
-    const fromCustomers = (Array.isArray(db.customers) ? db.customers : []).find((existingCustomer) => (
-      String(existingCustomer.phone || '').replace(/\D/g, '') === digits
-    ));
+    const fromCustomers = (
+      Array.isArray(db.customers) ? db.customers : []
+    ).find(
+      (existingCustomer) =>
+        String(existingCustomer.phone || "").replace(/\D/g, "") === digits,
+    );
     if (fromCustomers) return fromCustomers;
 
     // Fallback: check past bills for this phone number
-    const fromBills = (Array.isArray(db.bills) ? db.bills : []).find((bill) => (
-      String(bill.phone || '').replace(/\D/g, '') === digits && bill.customer
-    ));
+    const fromBills = (Array.isArray(db.bills) ? db.bills : []).find(
+      (bill) =>
+        String(bill.phone || "").replace(/\D/g, "") === digits && bill.customer,
+    );
     if (fromBills) return { name: fromBills.customer, phone: fromBills.phone };
 
     return null;
   };
 
-
-
   const now = new Date();
-  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+  const startOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    0,
+    0,
+    0,
+    0,
+  );
   const startOfTomorrow = new Date(startOfToday);
   startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
-  
-  const lastShiftEndStr = localStorage.getItem('snt_last_shift_end');
+
+  const lastShiftEndStr = localStorage.getItem("snt_last_shift_end");
   let currentShiftStart = startOfToday;
   if (lastShiftEndStr) {
     const lse = new Date(lastShiftEndStr);
@@ -675,44 +726,49 @@ export default function Billing({ erp, user }) {
 
   const recentBills = (db.bills || [])
     .filter((bill) => {
-      const isVisibleUser = isAdmin || isSameUserName(bill.by || bill.by_user, user?.user);
+      const isVisibleUser =
+        isAdmin || isSameUserName(bill.by || bill.by_user, user?.user);
       const isNotHidden = !hiddenRecentBillIds.includes(bill.id);
-      
+
       const billDateStr = bill.date || bill.created_at;
       if (!billDateStr) return false;
       const d = new Date(billDateStr);
       const isCurrentShift = d >= currentShiftStart && d < startOfTomorrow;
-      
+
       return isVisibleUser && isNotHidden && isCurrentShift;
     })
-    .sort((a, b) => new Date(b.date || b.created_at || 0) - new Date(a.date || a.created_at || 0))
+    .sort(
+      (a, b) =>
+        new Date(b.date || b.created_at || 0) -
+        new Date(a.date || a.created_at || 0),
+    )
     .slice(0, 6);
   const recentBillsTitle = "Today's Bills";
 
   const modalStyles = {
     content: {
-      background: isDarkTheme ? '#1b2433' : '#ffffff',
-      border: `1px solid ${isDarkTheme ? '#334155' : '#e2e5ea'}`,
+      background: isDarkTheme ? "#1b2433" : "#ffffff",
+      border: `1px solid ${isDarkTheme ? "#334155" : "#e2e5ea"}`,
       padding: 0,
     },
     header: {
-      background: isDarkTheme ? '#1b2433' : '#ffffff',
-      borderBottom: `1px solid ${isDarkTheme ? '#334155' : '#e2e5ea'}`,
+      background: isDarkTheme ? "#1b2433" : "#ffffff",
+      borderBottom: `1px solid ${isDarkTheme ? "#334155" : "#e2e5ea"}`,
     },
     body: {
-      background: isDarkTheme ? '#1b2433' : '#ffffff',
+      background: isDarkTheme ? "#1b2433" : "#ffffff",
     },
     footer: {
-      background: isDarkTheme ? '#1b2433' : '#ffffff',
-      borderTop: `1px solid ${isDarkTheme ? '#334155' : '#e2e5ea'}`,
+      background: isDarkTheme ? "#1b2433" : "#ffffff",
+      borderTop: `1px solid ${isDarkTheme ? "#334155" : "#e2e5ea"}`,
     },
   };
 
   const cartColumns = [
     {
-      title: 'Item',
-      dataIndex: 'name',
-      key: 'name',
+      title: "Item",
+      dataIndex: "name",
+      key: "name",
       width: 280,
       render: (name, item) => (
         <Space orientation="vertical" size={2} className="billing-item-cell">
@@ -722,9 +778,9 @@ export default function Billing({ erp, user }) {
       ),
     },
     {
-      title: 'Qty',
-      key: 'qty',
-      align: 'center',
+      title: "Qty",
+      key: "qty",
+      align: "center",
       width: 150,
       render: (_, item, index) => {
         const maxQty = getMaxQtyForCartItem(item, index);
@@ -748,17 +804,19 @@ export default function Billing({ erp, user }) {
       },
     },
     {
-      title: 'Total',
-      dataIndex: 'total',
-      key: 'total',
-      align: 'right',
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
+      align: "right",
       width: 150,
-      render: (total) => <Text className="billing-money">{formatCurrency(total)}</Text>,
+      render: (total) => (
+        <Text className="billing-money">{formatCurrency(total)}</Text>
+      ),
     },
     {
-      title: '',
-      key: 'action',
-      align: 'center',
+      title: "",
+      key: "action",
+      align: "center",
       width: 80,
       render: (_, item, index) => (
         <Popconfirm
@@ -770,11 +828,7 @@ export default function Billing({ erp, user }) {
           onConfirm={() => removeItem(index)}
         >
           <Tooltip title="Remove item">
-            <Button
-              danger
-              type="text"
-              icon={<DeleteOutlined />}
-            />
+            <Button danger type="text" icon={<DeleteOutlined />} />
           </Tooltip>
         </Popconfirm>
       ),
@@ -783,43 +837,42 @@ export default function Billing({ erp, user }) {
 
   const billDetailColumns = [
     {
-      title: 'Item',
-      dataIndex: 'name',
-      key: 'name',
+      title: "Item",
+      dataIndex: "name",
+      key: "name",
       width: 240,
       render: (name) => <Text className="billing-item-name">{name}</Text>,
     },
     {
-      title: 'Qty',
-      dataIndex: 'qty',
-      key: 'qty',
-      align: 'right',
+      title: "Qty",
+      dataIndex: "qty",
+      key: "qty",
+      align: "right",
       width: 80,
     },
     {
-      title: 'Rate',
-      dataIndex: 'price',
-      key: 'price',
-      align: 'right',
+      title: "Rate",
+      dataIndex: "price",
+      key: "price",
+      align: "right",
       width: 130,
       render: (price) => formatCurrency(price),
     },
     {
-      title: 'Total',
-      dataIndex: 'total',
-      key: 'total',
-      align: 'right',
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
+      align: "right",
       width: 130,
-      render: (total) => <Text className="billing-money">{formatCurrency(total)}</Text>,
+      render: (total) => (
+        <Text className="billing-money">{formatCurrency(total)}</Text>
+      ),
     },
   ];
 
   return (
     <ConfigProvider theme={billingAntTheme}>
-      <div className="page-header">
-        <h1 className="page-title">Billing Workspace</h1>
-        <p className="page-description">Create, manage and print customer bills.</p>
-      </div>
+      <div className="page-header" />
 
       <div className="billing-page">
         <div className="billing-layout">
@@ -837,11 +890,15 @@ export default function Billing({ erp, user }) {
                 <Text type="secondary">{db.settings.addr}</Text>
                 <Text type="secondary">Ph: {db.settings.phone}</Text>
               </div>
-              <Form layout="vertical" requiredMark={false} className="billing-form">
+              <Form
+                layout="vertical"
+                requiredMark={false}
+                className="billing-form"
+              >
                 <Form.Item label="Bill No">
                   <Input
                     readOnly
-                    value={`SNT-${String(nextBillSeq).padStart(4, '0')}`}
+                    value={`SNT-${String(nextBillSeq).padStart(4, "0")}`}
                     className="billing-bill-no-input"
                   />
                 </Form.Item>
@@ -853,9 +910,9 @@ export default function Billing({ erp, user }) {
                     value={payment}
                     onChange={setPayment}
                     options={[
-                      { label: 'Cash', value: 'Cash' },
-                      { label: 'UPI', value: 'UPI' },
-                      { label: 'Card', value: 'Card' },
+                      { label: "Cash", value: "Cash" },
+                      { label: "UPI", value: "UPI" },
+                      { label: "Card", value: "Card" },
                     ]}
                   />
                 </Form.Item>
@@ -872,7 +929,9 @@ export default function Billing({ erp, user }) {
                     maxLength={10}
                     placeholder="10 Digits Required"
                     onChange={(event) => {
-                      const nextPhone = event.target.value.replace(/\D/g, '').slice(0, 10);
+                      const nextPhone = event.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 10);
                       setPhone(nextPhone);
 
                       const matchedCustomer = findCustomerByPhone(nextPhone);
@@ -942,7 +1001,11 @@ export default function Billing({ erp, user }) {
               </div>
 
               <Space wrap className="billing-actions">
-                <Button type="primary" icon={<FileDoneOutlined />} onClick={handleSaveBill}>
+                <Button
+                  type="primary"
+                  icon={<FileDoneOutlined />}
+                  onClick={handleSaveBill}
+                >
                   Save Bill
                 </Button>
                 <Button icon={<FileSearchOutlined />} onClick={reviewBill}>
@@ -960,7 +1023,11 @@ export default function Billing({ erp, user }) {
                   onConfirm={() => setItems([])}
                   disabled={!items.length}
                 >
-                  <Button danger icon={<ClearOutlined />} disabled={!items.length}>
+                  <Button
+                    danger
+                    icon={<ClearOutlined />}
+                    disabled={!items.length}
+                  >
                     Clear
                   </Button>
                 </Popconfirm>
@@ -984,27 +1051,35 @@ export default function Billing({ erp, user }) {
                 {recentBills.map((bill) => (
                   <div
                     key={bill.id || bill.billNo}
-                  className="billing-recent-item"
-                  onClick={() => {
-                    setViewBill(bill);
-                    setIsReviewMode(false);
-                  }}
+                    className="billing-recent-item"
+                    onClick={() => {
+                      setViewBill(bill);
+                      setIsReviewMode(false);
+                    }}
                   >
                     <div className="billing-recent-meta">
                       <Space className="billing-recent-title">
                         <Text className="billing-bill-no">{bill.billNo}</Text>
                         <Text type="secondary">
                           {new Date(bill.date).toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit',
+                            hour: "2-digit",
+                            minute: "2-digit",
                           })}
                         </Text>
                       </Space>
-                      <Space orientation="vertical" size={8} className="billing-recent-copy">
-                        <Text className="billing-item-name">{bill.customer}</Text>
+                      <Space
+                        orientation="vertical"
+                        size={8}
+                        className="billing-recent-copy"
+                      >
+                        <Text className="billing-item-name">
+                          {bill.customer}
+                        </Text>
                         <Space>
                           <Tag color="green">{bill.payment}</Tag>
-                          <Text className="billing-money">{formatCurrency(bill.grand)}</Text>
+                          <Text className="billing-money">
+                            {formatCurrency(bill.grand)}
+                          </Text>
                         </Space>
                       </Space>
                     </div>
@@ -1037,7 +1112,7 @@ export default function Billing({ erp, user }) {
         </div>
 
         <Modal
-          title={isReviewMode ? 'Review Bill' : 'Bill Details'}
+          title={isReviewMode ? "Review Bill" : "Bill Details"}
           open={Boolean(viewBill)}
           onCancel={() => {
             setViewBill(null);
@@ -1070,7 +1145,12 @@ export default function Billing({ erp, user }) {
                 </div>
                 <div>
                   <Text type="secondary">Date</Text>
-                  <Text>{new Date(viewBill.date).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</Text>
+                  <Text>
+                    {new Date(viewBill.date).toLocaleString([], {
+                      dateStyle: "short",
+                      timeStyle: "short",
+                    })}
+                  </Text>
                 </div>
                 <div>
                   <Text type="secondary">Customer</Text>
@@ -1078,7 +1158,7 @@ export default function Billing({ erp, user }) {
                 </div>
                 <div>
                   <Text type="secondary">Phone</Text>
-                  <Text>{viewBill.phone || 'N/A'}</Text>
+                  <Text>{viewBill.phone || "N/A"}</Text>
                 </div>
                 <div>
                   <Text type="secondary">Payment</Text>
@@ -1086,12 +1166,14 @@ export default function Billing({ erp, user }) {
                 </div>
                 <div>
                   <Text type="secondary">Billed By</Text>
-                  <Text>{viewBill.by || 'System'}</Text>
+                  <Text>{viewBill.by || "System"}</Text>
                 </div>
               </div>
 
               <Table
-                rowKey={(item) => `${item.id || item.product_id || item.name}-${item.price}-${item.qty}-${item.total}`}
+                rowKey={(item) =>
+                  `${item.id || item.product_id || item.name}-${item.price}-${item.qty}-${item.total}`
+                }
                 columns={billDetailColumns}
                 dataSource={viewBill.items || []}
                 pagination={false}
@@ -1132,7 +1214,9 @@ export default function Billing({ erp, user }) {
           onOk={handleAddSelected}
           okText="Add Selected to Cart"
           cancelText="Cancel"
-          okButtonProps={{ disabled: Object.keys(selectedProducts).length === 0 }}
+          okButtonProps={{
+            disabled: Object.keys(selectedProducts).length === 0,
+          }}
           width={780}
           centered
           destroyOnHidden
@@ -1153,8 +1237,8 @@ export default function Billing({ erp, user }) {
               <Empty
                 description={
                   availableProductCount === 0
-                    ? 'No products are currently available for billing.'
-                    : 'No matching products found'
+                    ? "No products are currently available for billing."
+                    : "No matching products found"
                 }
               />
             ) : (
@@ -1167,72 +1251,105 @@ export default function Billing({ erp, user }) {
                 return (
                   <div
                     key={product.id}
-                  className={`billing-product-row ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}
-                  onClick={() => toggleProductSelection(product)}
-                >
-                  <Space className="billing-product-info">
-                    <Checkbox
-                      checked={isSelected}
-                      disabled={isDisabled}
-                      onClick={(event) => event.stopPropagation()}
-                      onChange={() => toggleProductSelection(product)}
-                    />
-                    <Space orientation="vertical" size={2}>
-                      <Text className="billing-item-name">{product.name}</Text>
-                      {product.code && <Text type="secondary">{product.code}</Text>}
-                      {currentStock > 0 ? (
-                        <Tag color="green">Available Stock: {currentStock}</Tag>
-                      ) : (
-                        <Tag color="red">Out of Stock</Tag>
-                      )}
-                    </Space>
-                  </Space>
-                  <Space className="billing-product-actions" onClick={(event) => event.stopPropagation()}>
-                    <Text className="billing-money">{formatCurrency(product.price)}</Text>
-                    {isSelected && (
-                      <InputNumber
-                        min={1}
-                        max={remainingStock}
-                        precision={0}
-                        value={selectedProducts[product.id]}
-                        className="billing-product-qty"
-                        parser={(displayValue) => (
-                          clampBillingQty(String(displayValue || '').replace(/\D/g, ''), remainingStock)
+                    className={`billing-product-row ${isSelected ? "selected" : ""} ${isDisabled ? "disabled" : ""}`}
+                    onClick={() => toggleProductSelection(product)}
+                  >
+                    <Space className="billing-product-info">
+                      <Checkbox
+                        checked={isSelected}
+                        disabled={isDisabled}
+                        onClick={(event) => event.stopPropagation()}
+                        onChange={() => toggleProductSelection(product)}
+                      />
+                      <Space orientation="vertical" size={2}>
+                        <Text className="billing-item-name">
+                          {product.name}
+                        </Text>
+                        {product.code && (
+                          <Text type="secondary">{product.code}</Text>
                         )}
-                        formatter={(value, info) => {
-                          const inputValue = info.userTyping ? info.input : value;
-                          const digits = String(inputValue ?? '').replace(/\D/g, '');
-                          return digits ? String(clampBillingQty(digits, remainingStock)) : '';
-                        }}
-                        onInput={(text) => {
-                          const digits = String(text || '').replace(/\D/g, '');
-                          if (!digits) {
-                            return;
+                        {currentStock > 0 ? (
+                          <Tag color="green">
+                            Available Stock: {currentStock}
+                          </Tag>
+                        ) : (
+                          <Tag color="red">Out of Stock</Tag>
+                        )}
+                      </Space>
+                    </Space>
+                    <Space
+                      className="billing-product-actions"
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      <Text className="billing-money">
+                        {formatCurrency(product.price)}
+                      </Text>
+                      {isSelected && (
+                        <InputNumber
+                          min={1}
+                          max={remainingStock}
+                          precision={0}
+                          value={selectedProducts[product.id]}
+                          className="billing-product-qty"
+                          parser={(displayValue) =>
+                            clampBillingQty(
+                              String(displayValue || "").replace(/\D/g, ""),
+                              remainingStock,
+                            )
                           }
+                          formatter={(value, info) => {
+                            const inputValue = info.userTyping
+                              ? info.input
+                              : value;
+                            const digits = String(inputValue ?? "").replace(
+                              /\D/g,
+                              "",
+                            );
+                            return digits
+                              ? String(clampBillingQty(digits, remainingStock))
+                              : "";
+                          }}
+                          onInput={(text) => {
+                            const digits = String(text || "").replace(
+                              /\D/g,
+                              "",
+                            );
+                            if (!digits) {
+                              return;
+                            }
 
-                          const parsed = parseInt(digits, 10);
-                          if (parsed > remainingStock) {
-                            showToast(`Only ${remainingStock} item(s) are available in stock.`, 'error');
+                            const parsed = parseInt(digits, 10);
+                            if (parsed > remainingStock) {
+                              showToast(
+                                `Only ${remainingStock} item(s) are available in stock.`,
+                                "error",
+                              );
+                              setSelectedProducts((prev) => ({
+                                ...prev,
+                                [product.id]: remainingStock,
+                              }));
+                            }
+                          }}
+                          onChange={(value) => {
+                            const parsed = parseInt(value, 10);
+                            const nextValue = clampBillingQty(
+                              parsed,
+                              remainingStock,
+                            );
+                            if (Number.isFinite(parsed) && nextValue < parsed) {
+                              showToast(
+                                `Only ${remainingStock} item(s) are available in stock.`,
+                                "error",
+                              );
+                            }
                             setSelectedProducts((prev) => ({
                               ...prev,
-                              [product.id]: remainingStock,
+                              [product.id]: nextValue,
                             }));
-                          }
-                        }}
-                        onChange={(value) => {
-                          const parsed = parseInt(value, 10);
-                          const nextValue = clampBillingQty(parsed, remainingStock);
-                          if (Number.isFinite(parsed) && nextValue < parsed) {
-                            showToast(`Only ${remainingStock} item(s) are available in stock.`, 'error');
-                          }
-                          setSelectedProducts((prev) => ({
-                            ...prev,
-                            [product.id]: nextValue,
-                          }));
-                        }}
-                      />
-                    )}
-                  </Space>
+                          }}
+                        />
+                      )}
+                    </Space>
                   </div>
                 );
               })
@@ -1240,7 +1357,11 @@ export default function Billing({ erp, user }) {
           </div>
 
           <Text type="secondary" className="billing-selected-count">
-            Selected: <Text className="billing-bill-no">{Object.keys(selectedProducts).length}</Text> product(s)
+            Selected:{" "}
+            <Text className="billing-bill-no">
+              {Object.keys(selectedProducts).length}
+            </Text>{" "}
+            product(s)
           </Text>
         </Modal>
       </div>

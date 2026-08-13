@@ -20,11 +20,16 @@ import {
   Typography,
   message,
   theme as antdTheme,
-} from "antd";import { hasAdminAccess, isRole, USER_ROLES } from "../utils/roles";
+} from "antd";
+import { hasAdminAccess, isRole, USER_ROLES } from "../utils/roles";
 import { useTheme } from "../context/useTheme";
-const reportsStyles = ".reports-page-wrap {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n}\n\n.reports-page-wrap .ant-card {\n  background: var(--card);\n  border-color: var(--border);\n  border-radius: 8px;\n  box-shadow: 0 8px 24px var(--shadow-soft);\n}\n\n.reports-page-wrap .ant-card-body,\n.reports-page-wrap .ant-statistic,\n.reports-page-wrap .ant-statistic-content,\n.reports-page-wrap .ant-typography {\n  color: var(--text) !important;\n}\n\n.reports-page-wrap .ant-statistic-title {\n  color: var(--text2) !important;\n}\n\n.reports-filter-card .ant-card-body {\n  display: flex;\n  align-items: flex-end;\n  justify-content: space-between;\n  gap: 16px;\n  padding: 16px;\n}\n\n.reports-filter-head {\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n}\n\n.reports-filter-head > .ant-space {\n  color: var(--text);\n  font-weight: 800;\n}\n\n.reports-filters {\n  align-items: center;\n  justify-content: flex-end;\n}\n\n.reports-date {\n  width: 160px;\n}\n\n.reports-card {\n  height: 100%;\n  cursor: pointer;\n}\n\n.reports-card .ant-card-body {\n  display: flex;\n  flex-direction: column;\n  gap: 14px;\n  min-height: 190px;\n  padding: 18px;\n}\n\n.reports-card-icon {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 46px;\n  height: 46px;\n  border-radius: 8px;\n  background: linear-gradient(135deg, rgba(217, 91, 61, 0.14), rgba(111, 32, 17, 0.08));\n  border: 1px solid var(--border);\n  color: var(--accent);\n  font-size: 1.25rem;\n}\n\n.reports-card-copy {\n  display: flex;\n  flex: 1;\n  flex-direction: column;\n  gap: 6px;\n}\n\n.reports-card-title {\n  color: var(--text) !important;\n  font-size: 1rem;\n  font-weight: 800;\n}\n\n.reports-card-meta {\n  font-size: 0.86rem;\n}\n\n.reports-card .ant-btn {\n  border: none;\n  color: #ffffff !important;\n  font-weight: 700;\n  box-shadow: none;\n}\n\n.reports-download-sales {\n  background: #d95b3d !important;\n}\n\n.reports-download-sales:hover,\n.reports-download-sales:focus {\n  background: #b84328 !important;\n}\n\n.reports-download-stock {\n  background: #d95b3d !important;\n}\n\n.reports-download-stock:hover,\n.reports-download-stock:focus {\n  background: #b84328 !important;\n}\n\n.reports-download-price {\n  background: #d95b3d !important;\n}\n\n.reports-download-price:hover,\n.reports-download-price:focus {\n  background: #b84328 !important;\n}\n\n.reports-download-login {\n  background: #d95b3d !important;\n}\n\n.reports-download-login:hover,\n.reports-download-login:focus {\n  background: #b84328 !important;\n}\n\n.reports-download-customer {\n  background: #d95b3d !important;\n}\n\n.reports-download-customer:hover,\n.reports-download-customer:focus {\n  background: #b84328 !important;\n}\n\n:root[data-theme='dark'] .reports-page-wrap .ant-card {\n  background: #1b2433;\n  border-color: #334155;\n  box-shadow: none;\n}\n\n:root[data-theme='dark'] .reports-page-wrap,\n:root[data-theme='dark'] .reports-page-wrap .ant-card-body,\n:root[data-theme='dark'] .reports-page-wrap .ant-statistic,\n:root[data-theme='dark'] .reports-page-wrap .ant-statistic-content,\n:root[data-theme='dark'] .reports-page-wrap .ant-typography,\n:root[data-theme='dark'] .reports-filter-head > .ant-space,\n:root[data-theme='dark'] .reports-card-title {\n  color: #f8fafc !important;\n}\n\n:root[data-theme='dark'] .reports-page-wrap .ant-statistic-title,\n:root[data-theme='dark'] .reports-card-meta {\n  color: #cbd5e1 !important;\n}\n\n:root[data-theme='dark'] .reports-card-icon {\n  background: #111827;\n  border-color: #334155;\n}\n\nhtml[data-theme='dark'] body .reports-page-wrap .ant-picker,\nhtml[data-theme='dark'] body .reports-page-wrap .ant-btn-default {\n  background-color: #111827 !important;\n  border-color: #334155 !important;\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .reports-page-wrap .ant-picker-input input,\nhtml[data-theme='dark'] body .reports-page-wrap .ant-picker-suffix {\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .reports-page-wrap .ant-picker-input input::placeholder {\n  color: #94a3b8 !important;\n}\n\nhtml[data-theme='dark'] body .reports-page-wrap .ant-btn-default:hover,\nhtml[data-theme='dark'] body .reports-page-wrap .ant-btn-default:focus {\n  background: #263244 !important;\n  border-color: #475569 !important;\n  color: #ffffff !important;\n}\n\nhtml[data-theme='dark'] body .ant-picker-dropdown .ant-picker-panel-container {\n  background: #111827 !important;\n  border: 1px solid #334155 !important;\n}\n\nhtml[data-theme='dark'] body .ant-picker-dropdown,\nhtml[data-theme='dark'] body .ant-picker-dropdown .ant-picker-cell,\nhtml[data-theme='dark'] body .ant-picker-dropdown .ant-picker-header,\nhtml[data-theme='dark'] body .ant-picker-dropdown .ant-picker-content th {\n  color: #e5e7eb !important;\n}\n\nhtml[data-theme='dark'] body .ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner,\nhtml[data-theme='dark'] body .ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-range-start .ant-picker-cell-inner,\nhtml[data-theme='dark'] body .ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-range-end .ant-picker-cell-inner {\n  background: #263244 !important;\n  color: #ffffff !important;\n}\n\n@media (max-width: 768px) {\n  .reports-filter-card .ant-card-body {\n    align-items: stretch;\n    flex-direction: column;\n  }\n\n  .reports-filters {\n    display: flex;\n    flex-direction: column;\n    align-items: stretch;\n    gap: 10px !important;\n  }\n\n  .reports-date {\n    width: 100%;\n  }\n\n}";
+const reportsStyles =
+  ".reports-page-wrap {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n}\n\n.reports-page-wrap .ant-card {\n  background: var(--card);\n  border-color: var(--border);\n  border-radius: 8px;\n  box-shadow: 0 8px 24px var(--shadow-soft);\n}\n\n.reports-page-wrap .ant-card-body,\n.reports-page-wrap .ant-statistic,\n.reports-page-wrap .ant-statistic-content,\n.reports-page-wrap .ant-typography {\n  color: var(--text) !important;\n}\n\n.reports-page-wrap .ant-statistic-title {\n  color: var(--text2) !important;\n}\n\n.reports-filter-card .ant-card-body {\n  display: flex;\n  align-items: flex-end;\n  justify-content: space-between;\n  gap: 16px;\n  padding: 16px;\n}\n\n.reports-filter-head {\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n}\n\n.reports-filter-head > .ant-space {\n  color: var(--text);\n  font-weight: 800;\n}\n\n.reports-filters {\n  align-items: center;\n  justify-content: flex-end;\n}\n\n.reports-date {\n  width: 160px;\n}\n\n.reports-card {\n  height: 100%;\n  cursor: pointer;\n}\n\n.reports-card .ant-card-body {\n  display: flex;\n  flex-direction: column;\n  gap: 14px;\n  min-height: 190px;\n  padding: 18px;\n}\n\n.reports-card-icon {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 46px;\n  height: 46px;\n  border-radius: 8px;\n  background: linear-gradient(135deg, rgba(217, 91, 61, 0.14), rgba(111, 32, 17, 0.08));\n  border: 1px solid var(--border);\n  color: var(--accent);\n  font-size: 1.25rem;\n}\n\n.reports-card-copy {\n  display: flex;\n  flex: 1;\n  flex-direction: column;\n  gap: 6px;\n}\n\n.reports-card-title {\n  color: var(--text) !important;\n  font-size: 1rem;\n  font-weight: 800;\n}\n\n.reports-card-meta {\n  font-size: 0.86rem;\n}\n\n.reports-card .ant-btn {\n  border: none;\n  color: #ffffff !important;\n  font-weight: 700;\n  box-shadow: none;\n}\n\n.reports-download-sales {\n  background: #d95b3d !important;\n}\n\n.reports-download-sales:hover,\n.reports-download-sales:focus {\n  background: #b84328 !important;\n}\n\n.reports-download-stock {\n  background: #d95b3d !important;\n}\n\n.reports-download-stock:hover,\n.reports-download-stock:focus {\n  background: #b84328 !important;\n}\n\n.reports-download-price {\n  background: #d95b3d !important;\n}\n\n.reports-download-price:hover,\n.reports-download-price:focus {\n  background: #b84328 !important;\n}\n\n.reports-download-login {\n  background: #d95b3d !important;\n}\n\n.reports-download-login:hover,\n.reports-download-login:focus {\n  background: #b84328 !important;\n}\n\n.reports-download-customer {\n  background: #d95b3d !important;\n}\n\n.reports-download-customer:hover,\n.reports-download-customer:focus {\n  background: #b84328 !important;\n}\n\n:root[data-theme='dark'] .reports-page-wrap .ant-card {\n  background: #1b2433;\n  border-color: #334155;\n  box-shadow: none;\n}\n\n:root[data-theme='dark'] .reports-page-wrap,\n:root[data-theme='dark'] .reports-page-wrap .ant-card-body,\n:root[data-theme='dark'] .reports-page-wrap .ant-statistic,\n:root[data-theme='dark'] .reports-page-wrap .ant-statistic-content,\n:root[data-theme='dark'] .reports-page-wrap .ant-typography,\n:root[data-theme='dark'] .reports-filter-head > .ant-space,\n:root[data-theme='dark'] .reports-card-title {\n  color: #f8fafc !important;\n}\n\n:root[data-theme='dark'] .reports-page-wrap .ant-statistic-title,\n:root[data-theme='dark'] .reports-card-meta {\n  color: #cbd5e1 !important;\n}\n\n:root[data-theme='dark'] .reports-card-icon {\n  background: #111827;\n  border-color: #334155;\n}\n\nhtml[data-theme='dark'] body .reports-page-wrap .ant-picker,\nhtml[data-theme='dark'] body .reports-page-wrap .ant-btn-default {\n  background-color: #111827 !important;\n  border-color: #334155 !important;\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .reports-page-wrap .ant-picker-input input,\nhtml[data-theme='dark'] body .reports-page-wrap .ant-picker-suffix {\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .reports-page-wrap .ant-picker-input input::placeholder {\n  color: #94a3b8 !important;\n}\n\nhtml[data-theme='dark'] body .reports-page-wrap .ant-btn-default:hover,\nhtml[data-theme='dark'] body .reports-page-wrap .ant-btn-default:focus {\n  background: #263244 !important;\n  border-color: #475569 !important;\n  color: #ffffff !important;\n}\n\nhtml[data-theme='dark'] body .ant-picker-dropdown .ant-picker-panel-container {\n  background: #111827 !important;\n  border: 1px solid #334155 !important;\n}\n\nhtml[data-theme='dark'] body .ant-picker-dropdown,\nhtml[data-theme='dark'] body .ant-picker-dropdown .ant-picker-cell,\nhtml[data-theme='dark'] body .ant-picker-dropdown .ant-picker-header,\nhtml[data-theme='dark'] body .ant-picker-dropdown .ant-picker-content th {\n  color: #e5e7eb !important;\n}\n\nhtml[data-theme='dark'] body .ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner,\nhtml[data-theme='dark'] body .ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-range-start .ant-picker-cell-inner,\nhtml[data-theme='dark'] body .ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-range-end .ant-picker-cell-inner {\n  background: #263244 !important;\n  color: #ffffff !important;\n}\n\n@media (max-width: 768px) {\n  .reports-filter-card .ant-card-body {\n    align-items: stretch;\n    flex-direction: column;\n  }\n\n  .reports-filters {\n    display: flex;\n    flex-direction: column;\n    align-items: stretch;\n    gap: 10px !important;\n  }\n\n  .reports-date {\n    width: 100%;\n  }\n\n}";
 
-if (typeof document !== "undefined" && !document.getElementById("combined-reports-styles")) {
+if (
+  typeof document !== "undefined" &&
+  !document.getElementById("combined-reports-styles")
+) {
   const style = document.createElement("style");
   style.id = "combined-reports-styles";
   style.textContent = reportsStyles;
@@ -70,7 +75,12 @@ const getDateValue = (dateValue) => {
 };
 
 const isSameUserName = (left, right) =>
-  String(left || "").trim().toLowerCase() === String(right || "").trim().toLowerCase();
+  String(left || "")
+    .trim()
+    .toLowerCase() ===
+  String(right || "")
+    .trim()
+    .toLowerCase();
 
 export default function Reports({ db, user }) {
   const { effectiveTheme } = useTheme();
@@ -136,7 +146,13 @@ export default function Reports({ db, user }) {
           effectiveEndDate,
         );
       }),
-    [billsSource, canManageAdminPages, effectiveEndDate, effectiveStartDate, user],
+    [
+      billsSource,
+      canManageAdminPages,
+      effectiveEndDate,
+      effectiveStartDate,
+      user,
+    ],
   );
 
   const filteredPriceHistory = useMemo(
@@ -187,7 +203,8 @@ export default function Reports({ db, user }) {
     let filename = "";
 
     if (type === "sales") {
-      csv = "Bill No,Date,Customer,Phone,Payment,Items,Subtotal,CGST,SGST,Grand Total,By\n";
+      csv =
+        "Bill No,Date,Customer,Phone,Payment,Items,Subtotal,CGST,SGST,Grand Total,By\n";
       csv += bills
         .map(
           (bill) =>
@@ -198,7 +215,8 @@ export default function Reports({ db, user }) {
         ? `FullSalesReport${dateSuffix}_${today}.csv`
         : `MySalesReport_${user?.user}${dateSuffix}_${today}.csv`;
     } else if (type === "stock") {
-      csv = "Product,Category,Unit,Price,Opening Stock,Sold,Current Stock,Status\n";
+      csv =
+        "Product,Category,Unit,Price,Opening Stock,Sold,Current Stock,Status\n";
       csv += products
         .map(
           (product) =>
@@ -221,7 +239,9 @@ export default function Reports({ db, user }) {
         .map((log, index) => {
           const loginTime = log.loginTime || log.login_time;
           const logoutTime = log.logoutTime || log.logout_time;
-          const duration = logoutTime ? formatDuration(loginTime, logoutTime) : "Active";
+          const duration = logoutTime
+            ? formatDuration(loginTime, logoutTime)
+            : "Active";
           return `${index + 1},${log.user},${log.role},${new Date(loginTime).toLocaleString()},${logoutTime ? new Date(logoutTime).toLocaleString() : "Online"},${duration},${logoutTime ? "Ended" : "Online"}`;
         })
         .join("\n");
@@ -300,12 +320,7 @@ export default function Reports({ db, user }) {
 
   return (
     <ConfigProvider theme={reportsAntTheme}>
-      <div className="page-header">
-        <h1 className="page-title">Reports & Analytics</h1>
-        <p className="page-description">
-          Generate comprehensive sales and business reports.
-        </p>
-      </div>
+      <div className="page-header" />
 
       <div className="reports-page-wrap">
         <Card className="reports-filter-card no-print">
@@ -315,7 +330,8 @@ export default function Reports({ db, user }) {
               <span>Reports Download</span>
             </Space>
             <Text type="secondary">
-              Choose a date range, or leave both empty to download only today's reports.
+              Choose a date range, or leave both empty to download only today's
+              reports.
             </Text>
           </div>
 
@@ -335,18 +351,16 @@ export default function Reports({ db, user }) {
               minDate={startDate || undefined}
               className="reports-date"
             />
-            <Button icon={<SyncOutlined />} onClick={clearDates}>Clear Dates</Button>
+            <Button icon={<SyncOutlined />} onClick={clearDates}>
+              Clear Dates
+            </Button>
           </Space>
         </Card>
 
         <Row gutter={[16, 16]} className="reports-cards-grid">
           {reportCards.map((report) => (
             <Col key={report.key} xs={24} sm={12} xl={8}>
-              <Card
-                hoverable
-                className="reports-card"
-                onClick={report.onClick}
-              >
+              <Card hoverable className="reports-card" onClick={report.onClick}>
                 <div className="reports-card-icon">{report.icon}</div>
                 <div className="reports-card-copy">
                   <Text className="reports-card-title">{report.title}</Text>

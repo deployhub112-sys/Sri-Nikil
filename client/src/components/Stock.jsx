@@ -12,6 +12,7 @@ import {
   ConfigProvider,
   Empty,
   Form,
+  Input,
   InputNumber,
   Modal,
   Popconfirm,
@@ -22,10 +23,15 @@ import {
   Typography,
   message,
   theme as antdTheme,
-} from "antd";import { useTheme } from "../context/useTheme";
-const stockStyles = ".stock-page {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n  min-width: 0;\n  width: 100%;\n}\n\n.stock-page .ant-card {\n  background: var(--card);\n  border-color: var(--border);\n  border-radius: 8px;\n  box-shadow: 0 8px 24px var(--shadow-soft);\n}\n\n.stock-page .ant-card-body,\n.stock-page .ant-card-head,\n.stock-page .ant-typography {\n  color: var(--text) !important;\n}\n\n.stock-page .ant-card-head {\n  min-height: 56px;\n  border-bottom-color: var(--border);\n}\n\n.stock-page .ant-card-head-title {\n  color: var(--text);\n  font-weight: 800;\n}\n\n.stock-table-card {\n  overflow: hidden;\n}\n\n.stock-table-card .ant-card-body {\n  padding: 0;\n}\n\n.stock-table-card .ant-table {\n  background: transparent;\n  color: var(--text);\n  table-layout: fixed;\n}\n\n.stock-table-card .ant-table-thead > tr > th {\n  background: var(--surface) !important;\n  color: var(--text2) !important;\n  border-bottom-color: var(--border);\n  font-weight: 800;\n  padding: 16px 20px;\n  vertical-align: middle;\n}\n\n.stock-table-card .ant-table-thead > tr > th::before {\n  display: none !important;\n}\n\n.stock-table-card .ant-table-tbody > tr > td {\n  background: var(--card);\n  border-bottom-color: var(--border);\n  color: var(--text);\n  height: 74px;\n  padding: 14px 20px;\n  vertical-align: middle;\n}\n\n.stock-table-card .ant-table-tbody > tr:hover > td {\n  background: var(--surface-hover) !important;\n}\n\n.stock-product-cell {\n  max-width: 100%;\n}\n\n.stock-product-avatar {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 38px;\n  height: 38px;\n  flex: 0 0 38px;\n  border-radius: 8px;\n  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(249, 115, 22, 0.14));\n  border: 1px solid var(--border);\n  color: var(--text);\n  font-size: 0.78rem;\n  font-weight: 800;\n  letter-spacing: 0;\n}\n\n.stock-product-copy {\n  min-width: 0;\n}\n\n.stock-product-name {\n  display: block;\n  color: var(--text) !important;\n  font-weight: 800;\n  line-height: 1.35;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.stock-product-code {\n  display: block;\n  margin-top: 3px;\n  color: var(--text2) !important;\n  font-size: 0.76rem;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.stock-current-value,\n.stock-money {\n  color: var(--text) !important;\n  font-weight: 800;\n  white-space: nowrap;\n}\n\n.stock-refill-qty {\n  color: var(--green) !important;\n  font-weight: 800;\n}\n\n.stock-table-card .ant-tag {\n  margin-inline-end: 0;\n}\n\n.stock-number-input {\n  width: 100%;\n}\n\n.stock-modal .ant-modal-content {\n  padding: 0 !important;\n  overflow: hidden;\n  border: 1px solid var(--border);\n  border-radius: 8px;\n}\n\n.stock-modal .ant-modal-header {\n  margin: 0;\n  padding: 20px 24px 12px;\n  border-bottom: 1px solid var(--border);\n}\n\n.stock-modal .ant-modal-body {\n  padding: 20px 24px 4px;\n}\n\n.stock-modal .ant-modal-footer {\n  margin: 0;\n  padding: 16px 24px 20px;\n  border-top: 1px solid var(--border);\n}\n\n.stock-modal .ant-modal-title,\n.stock-modal .ant-form-item-label > label {\n  color: var(--text) !important;\n}\n\n.stock-modal-description {\n  display: block;\n  margin-bottom: 16px;\n}\n\n.stock-modal .ant-form-item {\n  margin-bottom: 18px;\n}\n\n:root[data-theme='dark'] .stock-page .ant-card {\n  background: #1b2433;\n  border-color: #334155;\n  box-shadow: none;\n}\n\n:root[data-theme='dark'] .stock-page,\n:root[data-theme='dark'] .stock-page .ant-card-body,\n:root[data-theme='dark'] .stock-page .ant-card-head,\n:root[data-theme='dark'] .stock-page .ant-card-head-title,\n:root[data-theme='dark'] .stock-page .ant-typography,\n:root[data-theme='dark'] .stock-page .stock-product-name,\n:root[data-theme='dark'] .stock-page .stock-current-value,\n:root[data-theme='dark'] .stock-page .stock-money {\n  color: #f8fafc !important;\n}\n\n:root[data-theme='dark'] .stock-page .stock-product-code {\n  color: #cbd5e1 !important;\n}\n\n:root[data-theme='dark'] .stock-table-card .ant-table,\n:root[data-theme='dark'] .stock-table-card .ant-table-container,\n:root[data-theme='dark'] .stock-table-card .ant-table-content,\n:root[data-theme='dark'] .stock-table-card .ant-table-cell-scrollbar {\n  background: #1b2433 !important;\n}\n\n:root[data-theme='dark'] .stock-table-card .ant-table-thead > tr > th {\n  background: #111827 !important;\n  color: #e5e7eb !important;\n  border-bottom-color: #334155 !important;\n}\n\n:root[data-theme='dark'] .stock-table-card .ant-table-tbody > tr > td {\n  background: #1b2433 !important;\n  border-bottom-color: #334155 !important;\n  color: #f8fafc !important;\n}\n\n:root[data-theme='dark'] .stock-table-card .ant-table-tbody > tr.ant-table-row:hover > td,\n:root[data-theme='dark'] .stock-table-card .ant-table-tbody > tr:hover > td {\n  background: #263244 !important;\n}\n\n:root[data-theme='dark'] .stock-table-card .ant-pagination-item,\n:root[data-theme='dark'] .stock-table-card .ant-pagination-prev button,\n:root[data-theme='dark'] .stock-table-card .ant-pagination-next button {\n  background: #111827 !important;\n  border-color: #334155 !important;\n  color: #cbd5e1 !important;\n}\n\n:root[data-theme='dark'] .stock-table-card .ant-pagination-item a,\n:root[data-theme='dark'] .stock-table-card .ant-pagination-prev button,\n:root[data-theme='dark'] .stock-table-card .ant-pagination-next button {\n  color: #cbd5e1 !important;\n}\n\n:root[data-theme='dark'] .stock-table-card .ant-pagination-item-active {\n  border-color: var(--accent) !important;\n}\n\n:root[data-theme='dark'] .stock-table-card .ant-pagination-item-active a {\n  color: #ffffff !important;\n}\n\n:root[data-theme='dark'] .stock-page .ant-tag {\n  background: #111827;\n  border-color: #334155;\n  color: #e5e7eb;\n}\n\n:root[data-theme='dark'] .stock-page .ant-tag-green {\n  background: rgba(34, 197, 94, 0.14);\n  border-color: rgba(74, 222, 128, 0.34);\n  color: #bbf7d0;\n}\n\n:root[data-theme='dark'] .stock-page .ant-tag-orange {\n  background: rgba(249, 115, 22, 0.16);\n  border-color: rgba(251, 146, 60, 0.38);\n  color: #fed7aa;\n}\n\n:root[data-theme='dark'] .stock-page .ant-tag-red {\n  background: rgba(248, 113, 113, 0.14);\n  border-color: rgba(248, 113, 113, 0.36);\n  color: #fecaca;\n}\n\nhtml[data-theme='dark'] body .stock-modal,\nhtml[data-theme='dark'] body .stock-modal .ant-modal-content {\n  background: transparent !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-modal-content,\nhtml[data-theme='dark'] body .stock-modal .ant-modal-header,\nhtml[data-theme='dark'] body .stock-modal .ant-modal-body,\nhtml[data-theme='dark'] body .stock-modal .ant-modal-footer {\n  background-color: #1b2433 !important;\n  border-color: #334155 !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-modal-title,\nhtml[data-theme='dark'] body .stock-modal .ant-form-item-label > label,\nhtml[data-theme='dark'] body .stock-modal .ant-typography {\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-modal-close,\nhtml[data-theme='dark'] body .stock-modal .ant-modal-close-x {\n  color: #cbd5e1 !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-modal-close:hover {\n  background: #263244 !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-input-number,\nhtml[data-theme='dark'] body .stock-modal .ant-input-number-input {\n  background-color: #111827 !important;\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-input-number {\n  border-color: #334155 !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-input-number:hover {\n  border-color: #475569 !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-input-number-focused {\n  border-color: var(--accent) !important;\n  box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.16) !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-input-number-input::placeholder {\n  color: #94a3b8 !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-btn-default {\n  background: #111827 !important;\n  border-color: #334155 !important;\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-btn-default:hover,\nhtml[data-theme='dark'] body .stock-modal .ant-btn-default:focus {\n  background: #263244 !important;\n  border-color: #475569 !important;\n  color: #ffffff !important;\n}\n\n@media (max-width: 768px) {\n  .stock-table-card .ant-table-thead > tr > th,\n  .stock-table-card .ant-table-tbody > tr > td {\n    padding: 12px 14px;\n  }\n}";
+} from "antd";
+import { useTheme } from "../context/useTheme";
+const stockStyles =
+  ".stock-page {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n  min-width: 0;\n  width: 100%;\n}\n\n.stock-page .ant-card {\n  background: var(--card);\n  border-color: var(--border);\n  border-radius: 8px;\n  box-shadow: 0 8px 24px var(--shadow-soft);\n}\n\n.stock-page .ant-card-body,\n.stock-page .ant-card-head,\n.stock-page .ant-typography {\n  color: var(--text) !important;\n}\n\n.stock-page .ant-card-head {\n  min-height: 56px;\n  border-bottom-color: var(--border);\n}\n\n.stock-page .ant-card-head-title {\n  color: var(--text);\n  font-weight: 800;\n}\n\n.stock-table-card {\n  overflow: hidden;\n}\n\n.stock-table-card .ant-card-body {\n  padding: 0;\n}\n\n.stock-table-card .ant-table {\n  background: transparent;\n  color: var(--text);\n  table-layout: fixed;\n}\n\n.stock-table-card .ant-table-thead > tr > th {\n  background: var(--surface) !important;\n  color: var(--text2) !important;\n  border-bottom-color: var(--border);\n  font-weight: 800;\n  padding: 16px 20px;\n  vertical-align: middle;\n}\n\n.stock-table-card .ant-table-thead > tr > th::before {\n  display: none !important;\n}\n\n.stock-table-card .ant-table-tbody > tr > td {\n  background: var(--card);\n  border-bottom-color: var(--border);\n  color: var(--text);\n  height: 74px;\n  padding: 14px 20px;\n  vertical-align: middle;\n}\n\n.stock-table-card .ant-table-tbody > tr:hover > td {\n  background: var(--surface-hover) !important;\n}\n\n.stock-product-cell {\n  max-width: 100%;\n}\n\n.stock-product-avatar {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 38px;\n  height: 38px;\n  flex: 0 0 38px;\n  border-radius: 8px;\n  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(249, 115, 22, 0.14));\n  border: 1px solid var(--border);\n  color: var(--text);\n  font-size: 0.78rem;\n  font-weight: 800;\n  letter-spacing: 0;\n}\n\n.stock-product-copy {\n  min-width: 0;\n}\n\n.stock-product-name {\n  display: block;\n  color: var(--text) !important;\n  font-weight: 800;\n  line-height: 1.35;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.stock-product-code {\n  display: block;\n  margin-top: 3px;\n  color: var(--text2) !important;\n  font-size: 0.76rem;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.stock-current-value,\n.stock-money {\n  color: var(--text) !important;\n  font-weight: 800;\n  white-space: nowrap;\n}\n\n.stock-refill-qty {\n  color: var(--green) !important;\n  font-weight: 800;\n}\n\n.stock-table-card .ant-tag {\n  margin-inline-end: 0;\n}\n\n.stock-number-input {\n  width: 100%;\n}\n\n.stock-modal .ant-modal-content {\n  padding: 0 !important;\n  overflow: hidden;\n  border: 1px solid var(--border);\n  border-radius: 8px;\n}\n\n.stock-modal .ant-modal-header {\n  margin: 0;\n  padding: 20px 24px 12px;\n  border-bottom: 1px solid var(--border);\n}\n\n.stock-modal .ant-modal-body {\n  padding: 20px 24px 4px;\n}\n\n.stock-modal .ant-modal-footer {\n  margin: 0;\n  padding: 16px 24px 20px;\n  border-top: 1px solid var(--border);\n}\n\n.stock-modal .ant-modal-title,\n.stock-modal .ant-form-item-label > label {\n  color: var(--text) !important;\n}\n\n.stock-modal-description {\n  display: block;\n  margin-bottom: 16px;\n}\n\n.stock-modal .ant-form-item {\n  margin-bottom: 18px;\n}\n\n:root[data-theme='dark'] .stock-page .ant-card {\n  background: #1b2433;\n  border-color: #334155;\n  box-shadow: none;\n}\n\n:root[data-theme='dark'] .stock-page,\n:root[data-theme='dark'] .stock-page .ant-card-body,\n:root[data-theme='dark'] .stock-page .ant-card-head,\n:root[data-theme='dark'] .stock-page .ant-card-head-title,\n:root[data-theme='dark'] .stock-page .ant-typography,\n:root[data-theme='dark'] .stock-page .stock-product-name,\n:root[data-theme='dark'] .stock-page .stock-current-value,\n:root[data-theme='dark'] .stock-page .stock-money {\n  color: #f8fafc !important;\n}\n\n:root[data-theme='dark'] .stock-page .stock-product-code {\n  color: #cbd5e1 !important;\n}\n\n:root[data-theme='dark'] .stock-table-card .ant-table,\n:root[data-theme='dark'] .stock-table-card .ant-table-container,\n:root[data-theme='dark'] .stock-table-card .ant-table-content,\n:root[data-theme='dark'] .stock-table-card .ant-table-cell-scrollbar {\n  background: #1b2433 !important;\n}\n\n:root[data-theme='dark'] .stock-table-card .ant-table-thead > tr > th {\n  background: #111827 !important;\n  color: #e5e7eb !important;\n  border-bottom-color: #334155 !important;\n}\n\n:root[data-theme='dark'] .stock-table-card .ant-table-tbody > tr > td {\n  background: #1b2433 !important;\n  border-bottom-color: #334155 !important;\n  color: #f8fafc !important;\n}\n\n:root[data-theme='dark'] .stock-table-card .ant-table-tbody > tr.ant-table-row:hover > td,\n:root[data-theme='dark'] .stock-table-card .ant-table-tbody > tr:hover > td {\n  background: #263244 !important;\n}\n\n:root[data-theme='dark'] .stock-table-card .ant-pagination-item,\n:root[data-theme='dark'] .stock-table-card .ant-pagination-prev button,\n:root[data-theme='dark'] .stock-table-card .ant-pagination-next button {\n  background: #111827 !important;\n  border-color: #334155 !important;\n  color: #cbd5e1 !important;\n}\n\n:root[data-theme='dark'] .stock-table-card .ant-pagination-item a,\n:root[data-theme='dark'] .stock-table-card .ant-pagination-prev button,\n:root[data-theme='dark'] .stock-table-card .ant-pagination-next button {\n  color: #cbd5e1 !important;\n}\n\n:root[data-theme='dark'] .stock-table-card .ant-pagination-item-active {\n  border-color: var(--accent) !important;\n}\n\n:root[data-theme='dark'] .stock-table-card .ant-pagination-item-active a {\n  color: #ffffff !important;\n}\n\n:root[data-theme='dark'] .stock-page .ant-tag {\n  background: #111827;\n  border-color: #334155;\n  color: #e5e7eb;\n}\n\n:root[data-theme='dark'] .stock-page .ant-tag-green {\n  background: rgba(34, 197, 94, 0.14);\n  border-color: rgba(74, 222, 128, 0.34);\n  color: #bbf7d0;\n}\n\n:root[data-theme='dark'] .stock-page .ant-tag-orange {\n  background: rgba(249, 115, 22, 0.16);\n  border-color: rgba(251, 146, 60, 0.38);\n  color: #fed7aa;\n}\n\n:root[data-theme='dark'] .stock-page .ant-tag-red {\n  background: rgba(248, 113, 113, 0.14);\n  border-color: rgba(248, 113, 113, 0.36);\n  color: #fecaca;\n}\n\nhtml[data-theme='dark'] body .stock-modal,\nhtml[data-theme='dark'] body .stock-modal .ant-modal-content {\n  background: transparent !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-modal-content,\nhtml[data-theme='dark'] body .stock-modal .ant-modal-header,\nhtml[data-theme='dark'] body .stock-modal .ant-modal-body,\nhtml[data-theme='dark'] body .stock-modal .ant-modal-footer {\n  background-color: #1b2433 !important;\n  border-color: #334155 !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-modal-title,\nhtml[data-theme='dark'] body .stock-modal .ant-form-item-label > label,\nhtml[data-theme='dark'] body .stock-modal .ant-typography {\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-modal-close,\nhtml[data-theme='dark'] body .stock-modal .ant-modal-close-x {\n  color: #cbd5e1 !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-modal-close:hover {\n  background: #263244 !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-input-number,\nhtml[data-theme='dark'] body .stock-modal .ant-input-number-input {\n  background-color: #111827 !important;\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-input-number {\n  border-color: #334155 !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-input-number:hover {\n  border-color: #475569 !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-input-number-focused {\n  border-color: var(--accent) !important;\n  box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.16) !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-input-number-input::placeholder {\n  color: #94a3b8 !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-btn-default {\n  background: #111827 !important;\n  border-color: #334155 !important;\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .stock-modal .ant-btn-default:hover,\nhtml[data-theme='dark'] body .stock-modal .ant-btn-default:focus {\n  background: #263244 !important;\n  border-color: #475569 !important;\n  color: #ffffff !important;\n}\n\n@media (max-width: 768px) {\n  .stock-table-card .ant-table-thead > tr > th,\n  .stock-table-card .ant-table-tbody > tr > td {\n    padding: 12px 14px;\n  }\n}";
 
-if (typeof document !== "undefined" && !document.getElementById("combined-stock-styles")) {
+if (
+  typeof document !== "undefined" &&
+  !document.getElementById("combined-stock-styles")
+) {
   const style = document.createElement("style");
   style.id = "combined-stock-styles";
   style.textContent = stockStyles;
@@ -129,7 +135,10 @@ const stockMobileCompactStyles = `
 }
 `;
 
-if (typeof document !== "undefined" && !document.getElementById("stock-mobile-compact-styles")) {
+if (
+  typeof document !== "undefined" &&
+  !document.getElementById("stock-mobile-compact-styles")
+) {
   const style = document.createElement("style");
   style.id = "stock-mobile-compact-styles";
   style.textContent = stockMobileCompactStyles;
@@ -142,10 +151,11 @@ const EMPTY_PRODUCTS = [];
 const EMPTY_REFILLS = [];
 
 const getNonNegativeNumber = (value) => Math.max(0, Number(value || 0));
-const getOpeningStock = (product) => Math.max(
-  getNonNegativeNumber(product.opening_stock),
-  getNonNegativeNumber(product.stock),
-);
+const getOpeningStock = (product) =>
+  Math.max(
+    getNonNegativeNumber(product.opening_stock),
+    getNonNegativeNumber(product.stock),
+  );
 const getSold = (product) => getNonNegativeNumber(product.sold);
 const getStock = (product) => getNonNegativeNumber(product.stock);
 const getPrice = (product) => getNonNegativeNumber(product.price);
@@ -177,6 +187,17 @@ export default function Stock({ db, erp, user }) {
   const products = db.products || EMPTY_PRODUCTS;
   const refills = db.refills || EMPTY_REFILLS;
   const isDarkTheme = effectiveTheme === "dark";
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredProducts = useMemo(() => {
+    const q = normalizeName(searchQuery);
+    if (!q) return products;
+    return products.filter((p) => {
+      const name = normalizeName(p.name || "");
+      const code = String(p.code || p.id || "").toLowerCase();
+      return name.includes(q) || code.includes(q);
+    });
+  }, [products, searchQuery]);
 
   const stockAntTheme = useMemo(
     () => ({
@@ -306,7 +327,9 @@ export default function Stock({ db, erp, user }) {
       render: (_, product) => (
         <Space size={12} className="stock-product-cell">
           <div className="stock-product-avatar">
-            {String(product.name || "P").slice(0, 2).toUpperCase()}
+            {String(product.name || "P")
+              .slice(0, 2)
+              .toUpperCase()}
           </div>
           <div className="stock-product-copy">
             <Text className="stock-product-name">{product.name}</Text>
@@ -337,7 +360,9 @@ export default function Stock({ db, erp, user }) {
       key: "stock",
       align: "right",
       width: 120,
-      render: (stock) => <Text className="stock-current-value">{getStock({ stock })}</Text>,
+      render: (stock) => (
+        <Text className="stock-current-value">{getStock({ stock })}</Text>
+      ),
     },
     {
       title: "Stock Value",
@@ -390,7 +415,11 @@ export default function Stock({ db, erp, user }) {
       key: "productId",
       width: 130,
       render: (_, refill) => (
-        <Text>{refill.product_id || productIdByName.get(normalizeName(refill.product)) || "-"}</Text>
+        <Text>
+          {refill.product_id ||
+            productIdByName.get(normalizeName(refill.product)) ||
+            "-"}
+        </Text>
       ),
     },
     {
@@ -398,7 +427,9 @@ export default function Stock({ db, erp, user }) {
       dataIndex: "product",
       key: "product",
       width: 340,
-      render: (product) => <Text className="stock-product-name">{product}</Text>,
+      render: (product) => (
+        <Text className="stock-product-name">{product}</Text>
+      ),
     },
     {
       title: "Qty",
@@ -462,12 +493,7 @@ export default function Stock({ db, erp, user }) {
 
   return (
     <ConfigProvider theme={stockAntTheme}>
-      <div className="page-header">
-        <h1 className="page-title">Stock & Inventory</h1>
-        <p className="page-description">
-          Monitor product availability, sold units, and manage refills.
-        </p>
-      </div>
+      <div className="page-header" />
 
       <div className="stock-page">
         <Card
@@ -478,11 +504,19 @@ export default function Stock({ db, erp, user }) {
               <span>Stock Management</span>
             </Space>
           }
+          extra={
+            <Input.Search
+              placeholder="Search product by name or code"
+              allowClear
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ width: 320 }}
+            />
+          }
         >
           <Table
             rowKey="id"
             columns={inventoryColumns}
-            dataSource={products}
+            dataSource={filteredProducts}
             pagination={{ pageSize: 8, showSizeChanger: false }}
             scroll={{ x: 1140 }}
             tableLayout="fixed"

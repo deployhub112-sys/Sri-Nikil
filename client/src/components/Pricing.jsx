@@ -24,10 +24,15 @@ import {
   Typography,
   message,
   theme as antdTheme,
-} from "antd";import { useTheme } from "../context/useTheme";
-const pricingStyles = ".pricing-page {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n  min-width: 0;\n  width: 100%;\n}\n\n.pricing-page .ant-card {\n  background: var(--card);\n  border-color: var(--border);\n  border-radius: 8px;\n  box-shadow: 0 8px 24px var(--shadow-soft);\n}\n\n.pricing-page .ant-card-body,\n.pricing-page .ant-card-head,\n.pricing-page .ant-typography {\n  color: var(--text) !important;\n}\n\n.pricing-page .ant-card-head {\n  min-height: 56px;\n  border-bottom-color: var(--border);\n}\n\n.pricing-page .ant-card-head-title {\n  color: var(--text);\n  font-weight: 800;\n}\n\n.pricing-table-card {\n  overflow: hidden;\n}\n\n.pricing-table-card .ant-card-body {\n  padding: 0;\n}\n\n.pricing-table-card .ant-table {\n  background: transparent;\n  color: var(--text);\n  table-layout: fixed;\n}\n\n.pricing-table-card .ant-table-thead > tr > th {\n  background: var(--surface) !important;\n  color: var(--text2) !important;\n  border-bottom-color: var(--border);\n  font-weight: 800;\n  padding: 16px 20px;\n  vertical-align: middle;\n}\n\n.pricing-table-card .ant-table-thead > tr > th::before {\n  display: none !important;\n}\n\n.pricing-table-card .ant-table-tbody > tr > td {\n  background: var(--card);\n  border-bottom-color: var(--border);\n  color: var(--text);\n  height: 74px;\n  padding: 14px 20px;\n  vertical-align: middle;\n}\n\n.pricing-table-card .ant-table-tbody > tr:hover > td {\n  background: var(--surface-hover) !important;\n}\n\n.pricing-product-cell {\n  max-width: 100%;\n}\n\n.pricing-product-avatar {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 38px;\n  height: 38px;\n  flex: 0 0 38px;\n  border-radius: 8px;\n  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(249, 115, 22, 0.14));\n  border: 1px solid var(--border);\n  color: var(--text);\n  font-size: 0.78rem;\n  font-weight: 800;\n  letter-spacing: 0;\n}\n\n.pricing-product-copy {\n  min-width: 0;\n}\n\n.pricing-product-name {\n  display: block;\n  color: var(--text) !important;\n  font-weight: 800;\n  line-height: 1.35;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.pricing-product-code {\n  display: block;\n  margin-top: 3px;\n  color: var(--text2) !important;\n  font-size: 0.76rem;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.pricing-money {\n  color: var(--text) !important;\n  display: block;\n  font-weight: 800;\n  white-space: nowrap;\n}\n\n.pricing-table-card .ant-tag {\n  margin-inline-end: 0;\n}\n\n.pricing-number-input {\n  width: 100%;\n}\n\n.pricing-modal .ant-modal-content {\n  padding: 0 !important;\n  overflow: hidden;\n  border: 1px solid var(--border);\n  border-radius: 8px;\n}\n\n.pricing-modal .ant-modal-header {\n  margin: 0;\n  padding: 20px 24px 12px;\n  border-bottom: 1px solid var(--border);\n}\n\n.pricing-modal .ant-modal-body {\n  padding: 20px 24px 4px;\n}\n\n.pricing-modal .ant-modal-footer {\n  margin: 0;\n  padding: 16px 24px 20px;\n  border-top: 1px solid var(--border);\n}\n\n.pricing-modal .ant-modal-title,\n.pricing-modal .ant-form-item-label > label {\n  color: var(--text) !important;\n}\n\n.pricing-modal .ant-form-item {\n  margin-bottom: 18px;\n}\n\n:root[data-theme='dark'] .pricing-page .ant-card {\n  background: #1b2433;\n  border-color: #334155;\n  box-shadow: none;\n}\n\n:root[data-theme='dark'] .pricing-page,\n:root[data-theme='dark'] .pricing-page .ant-card-body,\n:root[data-theme='dark'] .pricing-page .ant-card-head,\n:root[data-theme='dark'] .pricing-page .ant-card-head-title,\n:root[data-theme='dark'] .pricing-page .ant-typography,\n:root[data-theme='dark'] .pricing-page .pricing-product-name,\n:root[data-theme='dark'] .pricing-page .pricing-money {\n  color: #f8fafc !important;\n}\n\n:root[data-theme='dark'] .pricing-page .pricing-product-code {\n  color: #cbd5e1 !important;\n}\n\n:root[data-theme='dark'] .pricing-table-card .ant-table,\n:root[data-theme='dark'] .pricing-table-card .ant-table-container,\n:root[data-theme='dark'] .pricing-table-card .ant-table-content,\n:root[data-theme='dark'] .pricing-table-card .ant-table-cell-scrollbar {\n  background: #1b2433 !important;\n}\n\n:root[data-theme='dark'] .pricing-table-card .ant-table-thead > tr > th {\n  background: #111827 !important;\n  color: #e5e7eb !important;\n  border-bottom-color: #334155 !important;\n}\n\n:root[data-theme='dark'] .pricing-table-card .ant-table-tbody > tr > td {\n  background: #1b2433 !important;\n  border-bottom-color: #334155 !important;\n  color: #f8fafc !important;\n}\n\n:root[data-theme='dark'] .pricing-table-card .ant-table-tbody > tr.ant-table-row:hover > td,\n:root[data-theme='dark'] .pricing-table-card .ant-table-tbody > tr:hover > td {\n  background: #263244 !important;\n}\n\n:root[data-theme='dark'] .pricing-table-card .ant-pagination-item,\n:root[data-theme='dark'] .pricing-table-card .ant-pagination-prev button,\n:root[data-theme='dark'] .pricing-table-card .ant-pagination-next button {\n  background: #111827 !important;\n  border-color: #334155 !important;\n  color: #cbd5e1 !important;\n}\n\n:root[data-theme='dark'] .pricing-table-card .ant-pagination-item a,\n:root[data-theme='dark'] .pricing-table-card .ant-pagination-prev button,\n:root[data-theme='dark'] .pricing-table-card .ant-pagination-next button {\n  color: #cbd5e1 !important;\n}\n\n:root[data-theme='dark'] .pricing-table-card .ant-pagination-item-active {\n  border-color: var(--accent) !important;\n}\n\n:root[data-theme='dark'] .pricing-table-card .ant-pagination-item-active a {\n  color: #ffffff !important;\n}\n\n:root[data-theme='dark'] .pricing-page .ant-tag {\n  background: #111827;\n  border-color: #334155;\n  color: #e5e7eb;\n}\n\nhtml[data-theme='dark'] body .pricing-modal,\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-content {\n  background: transparent !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-content,\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-header,\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-body,\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-footer {\n  background-color: #1b2433 !important;\n  border-color: #334155 !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-title,\nhtml[data-theme='dark'] body .pricing-modal .ant-form-item-label > label,\nhtml[data-theme='dark'] body .pricing-modal .ant-typography {\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-close,\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-close-x {\n  color: #cbd5e1 !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-close:hover {\n  background: #263244 !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-input,\nhtml[data-theme='dark'] body .pricing-modal .ant-input-number,\nhtml[data-theme='dark'] body .pricing-modal .ant-input-number-input {\n  background-color: #111827 !important;\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-input,\nhtml[data-theme='dark'] body .pricing-modal .ant-input-number {\n  border-color: #334155 !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-input:hover,\nhtml[data-theme='dark'] body .pricing-modal .ant-input-number:hover {\n  border-color: #475569 !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-input:focus,\nhtml[data-theme='dark'] body .pricing-modal .ant-input-number-focused {\n  border-color: var(--accent) !important;\n  box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.16) !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-input-number-prefix {\n  color: #cbd5e1 !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-btn-default {\n  background: #111827 !important;\n  border-color: #334155 !important;\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-btn-default:hover,\nhtml[data-theme='dark'] body .pricing-modal .ant-btn-default:focus {\n  background: #263244 !important;\n  border-color: #475569 !important;\n  color: #ffffff !important;\n}\n\nhtml[data-theme='dark'] body .ant-popover .ant-popconfirm,\nhtml[data-theme='dark'] body .ant-popover .ant-popover-inner {\n  background: #111827 !important;\n  color: #e5e7eb !important;\n}\n\nhtml[data-theme='dark'] body .ant-popover .ant-popover-title,\nhtml[data-theme='dark'] body .ant-popover .ant-popconfirm-description {\n  color: #e5e7eb !important;\n}\n\n@media (max-width: 768px) {\n  .pricing-table-card .ant-table-thead > tr > th,\n  .pricing-table-card .ant-table-tbody > tr > td {\n    padding: 12px 14px;\n  }\n}";
+} from "antd";
+import { useTheme } from "../context/useTheme";
+const pricingStyles =
+  ".pricing-page {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n  min-width: 0;\n  width: 100%;\n}\n\n.pricing-page .ant-card {\n  background: var(--card);\n  border-color: var(--border);\n  border-radius: 8px;\n  box-shadow: 0 8px 24px var(--shadow-soft);\n}\n\n.pricing-page .ant-card-body,\n.pricing-page .ant-card-head,\n.pricing-page .ant-typography {\n  color: var(--text) !important;\n}\n\n.pricing-page .ant-card-head {\n  min-height: 56px;\n  border-bottom-color: var(--border);\n}\n\n.pricing-page .ant-card-head-title {\n  color: var(--text);\n  font-weight: 800;\n}\n\n.pricing-table-card {\n  overflow: hidden;\n}\n\n.pricing-table-card .ant-card-body {\n  padding: 0;\n}\n\n.pricing-table-card .ant-table {\n  background: transparent;\n  color: var(--text);\n  table-layout: fixed;\n}\n\n.pricing-table-card .ant-table-thead > tr > th {\n  background: var(--surface) !important;\n  color: var(--text2) !important;\n  border-bottom-color: var(--border);\n  font-weight: 800;\n  padding: 16px 20px;\n  vertical-align: middle;\n}\n\n.pricing-table-card .ant-table-thead > tr > th::before {\n  display: none !important;\n}\n\n.pricing-table-card .ant-table-tbody > tr > td {\n  background: var(--card);\n  border-bottom-color: var(--border);\n  color: var(--text);\n  height: 74px;\n  padding: 14px 20px;\n  vertical-align: middle;\n}\n\n.pricing-table-card .ant-table-tbody > tr:hover > td {\n  background: var(--surface-hover) !important;\n}\n\n.pricing-product-cell {\n  max-width: 100%;\n}\n\n.pricing-product-avatar {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 38px;\n  height: 38px;\n  flex: 0 0 38px;\n  border-radius: 8px;\n  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(249, 115, 22, 0.14));\n  border: 1px solid var(--border);\n  color: var(--text);\n  font-size: 0.78rem;\n  font-weight: 800;\n  letter-spacing: 0;\n}\n\n.pricing-product-copy {\n  min-width: 0;\n}\n\n.pricing-product-name {\n  display: block;\n  color: var(--text) !important;\n  font-weight: 800;\n  line-height: 1.35;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.pricing-product-code {\n  display: block;\n  margin-top: 3px;\n  color: var(--text2) !important;\n  font-size: 0.76rem;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.pricing-money {\n  color: var(--text) !important;\n  display: block;\n  font-weight: 800;\n  white-space: nowrap;\n}\n\n.pricing-table-card .ant-tag {\n  margin-inline-end: 0;\n}\n\n.pricing-number-input {\n  width: 100%;\n}\n\n.pricing-modal .ant-modal-content {\n  padding: 0 !important;\n  overflow: hidden;\n  border: 1px solid var(--border);\n  border-radius: 8px;\n}\n\n.pricing-modal .ant-modal-header {\n  margin: 0;\n  padding: 20px 24px 12px;\n  border-bottom: 1px solid var(--border);\n}\n\n.pricing-modal .ant-modal-body {\n  padding: 20px 24px 4px;\n}\n\n.pricing-modal .ant-modal-footer {\n  margin: 0;\n  padding: 16px 24px 20px;\n  border-top: 1px solid var(--border);\n}\n\n.pricing-modal .ant-modal-title,\n.pricing-modal .ant-form-item-label > label {\n  color: var(--text) !important;\n}\n\n.pricing-modal .ant-form-item {\n  margin-bottom: 18px;\n}\n\n:root[data-theme='dark'] .pricing-page .ant-card {\n  background: #1b2433;\n  border-color: #334155;\n  box-shadow: none;\n}\n\n:root[data-theme='dark'] .pricing-page,\n:root[data-theme='dark'] .pricing-page .ant-card-body,\n:root[data-theme='dark'] .pricing-page .ant-card-head,\n:root[data-theme='dark'] .pricing-page .ant-card-head-title,\n:root[data-theme='dark'] .pricing-page .ant-typography,\n:root[data-theme='dark'] .pricing-page .pricing-product-name,\n:root[data-theme='dark'] .pricing-page .pricing-money {\n  color: #f8fafc !important;\n}\n\n:root[data-theme='dark'] .pricing-page .pricing-product-code {\n  color: #cbd5e1 !important;\n}\n\n:root[data-theme='dark'] .pricing-table-card .ant-table,\n:root[data-theme='dark'] .pricing-table-card .ant-table-container,\n:root[data-theme='dark'] .pricing-table-card .ant-table-content,\n:root[data-theme='dark'] .pricing-table-card .ant-table-cell-scrollbar {\n  background: #1b2433 !important;\n}\n\n:root[data-theme='dark'] .pricing-table-card .ant-table-thead > tr > th {\n  background: #111827 !important;\n  color: #e5e7eb !important;\n  border-bottom-color: #334155 !important;\n}\n\n:root[data-theme='dark'] .pricing-table-card .ant-table-tbody > tr > td {\n  background: #1b2433 !important;\n  border-bottom-color: #334155 !important;\n  color: #f8fafc !important;\n}\n\n:root[data-theme='dark'] .pricing-table-card .ant-table-tbody > tr.ant-table-row:hover > td,\n:root[data-theme='dark'] .pricing-table-card .ant-table-tbody > tr:hover > td {\n  background: #263244 !important;\n}\n\n:root[data-theme='dark'] .pricing-table-card .ant-pagination-item,\n:root[data-theme='dark'] .pricing-table-card .ant-pagination-prev button,\n:root[data-theme='dark'] .pricing-table-card .ant-pagination-next button {\n  background: #111827 !important;\n  border-color: #334155 !important;\n  color: #cbd5e1 !important;\n}\n\n:root[data-theme='dark'] .pricing-table-card .ant-pagination-item a,\n:root[data-theme='dark'] .pricing-table-card .ant-pagination-prev button,\n:root[data-theme='dark'] .pricing-table-card .ant-pagination-next button {\n  color: #cbd5e1 !important;\n}\n\n:root[data-theme='dark'] .pricing-table-card .ant-pagination-item-active {\n  border-color: var(--accent) !important;\n}\n\n:root[data-theme='dark'] .pricing-table-card .ant-pagination-item-active a {\n  color: #ffffff !important;\n}\n\n:root[data-theme='dark'] .pricing-page .ant-tag {\n  background: #111827;\n  border-color: #334155;\n  color: #e5e7eb;\n}\n\nhtml[data-theme='dark'] body .pricing-modal,\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-content {\n  background: transparent !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-content,\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-header,\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-body,\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-footer {\n  background-color: #1b2433 !important;\n  border-color: #334155 !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-title,\nhtml[data-theme='dark'] body .pricing-modal .ant-form-item-label > label,\nhtml[data-theme='dark'] body .pricing-modal .ant-typography {\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-close,\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-close-x {\n  color: #cbd5e1 !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-modal-close:hover {\n  background: #263244 !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-input,\nhtml[data-theme='dark'] body .pricing-modal .ant-input-number,\nhtml[data-theme='dark'] body .pricing-modal .ant-input-number-input {\n  background-color: #111827 !important;\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-input,\nhtml[data-theme='dark'] body .pricing-modal .ant-input-number {\n  border-color: #334155 !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-input:hover,\nhtml[data-theme='dark'] body .pricing-modal .ant-input-number:hover {\n  border-color: #475569 !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-input:focus,\nhtml[data-theme='dark'] body .pricing-modal .ant-input-number-focused {\n  border-color: var(--accent) !important;\n  box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.16) !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-input-number-prefix {\n  color: #cbd5e1 !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-btn-default {\n  background: #111827 !important;\n  border-color: #334155 !important;\n  color: #f8fafc !important;\n}\n\nhtml[data-theme='dark'] body .pricing-modal .ant-btn-default:hover,\nhtml[data-theme='dark'] body .pricing-modal .ant-btn-default:focus {\n  background: #263244 !important;\n  border-color: #475569 !important;\n  color: #ffffff !important;\n}\n\nhtml[data-theme='dark'] body .ant-popover .ant-popconfirm,\nhtml[data-theme='dark'] body .ant-popover .ant-popover-inner {\n  background: #111827 !important;\n  color: #e5e7eb !important;\n}\n\nhtml[data-theme='dark'] body .ant-popover .ant-popover-title,\nhtml[data-theme='dark'] body .ant-popover .ant-popconfirm-description {\n  color: #e5e7eb !important;\n}\n\n@media (max-width: 768px) {\n  .pricing-table-card .ant-table-thead > tr > th,\n  .pricing-table-card .ant-table-tbody > tr > td {\n    padding: 12px 14px;\n  }\n}";
 
-if (typeof document !== "undefined" && !document.getElementById("combined-pricing-styles")) {
+if (
+  typeof document !== "undefined" &&
+  !document.getElementById("combined-pricing-styles")
+) {
   const style = document.createElement("style");
   style.id = "combined-pricing-styles";
   style.textContent = pricingStyles;
@@ -106,7 +111,10 @@ const pricingMobileCompactStyles = `
 }
 `;
 
-if (typeof document !== "undefined" && !document.getElementById("pricing-mobile-compact-styles")) {
+if (
+  typeof document !== "undefined" &&
+  !document.getElementById("pricing-mobile-compact-styles")
+) {
   const style = document.createElement("style");
   style.id = "pricing-mobile-compact-styles";
   style.textContent = pricingMobileCompactStyles;
@@ -142,6 +150,17 @@ export default function Pricing({ db, erp, user }) {
   const products = db.products || EMPTY_PRODUCTS;
   const priceHistory = db.priceHistory || EMPTY_PRICE_HISTORY;
   const isDarkTheme = effectiveTheme === "dark";
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredProducts = useMemo(() => {
+    const q = normalizeName(searchQuery);
+    if (!q) return products;
+    return products.filter((p) => {
+      const name = normalizeName(p.name || "");
+      const code = String(p.code || p.id || "").toLowerCase();
+      return name.includes(q) || code.includes(q);
+    });
+  }, [products, searchQuery]);
 
   const pricingAntTheme = useMemo(
     () => ({
@@ -315,7 +334,9 @@ export default function Pricing({ db, erp, user }) {
       width: 170,
       render: (_, product) => {
         const history = latestHistoryByProduct.get(product.name);
-        const previous = history ? Number(history.old || 0) : Number(product.price || 0);
+        const previous = history
+          ? Number(history.old || 0)
+          : Number(product.price || 0);
         return <Text type="secondary">{formatCurrency(previous)}</Text>;
       },
     },
@@ -367,7 +388,12 @@ export default function Pricing({ db, erp, user }) {
       key: "productId",
       width: 130,
       render: (_, history) => (
-        <Text>{history.product_id || history.productId || productIdByName.get(normalizeName(history.product)) || "-"}</Text>
+        <Text>
+          {history.product_id ||
+            history.productId ||
+            productIdByName.get(normalizeName(history.product)) ||
+            "-"}
+        </Text>
       ),
     },
     {
@@ -375,7 +401,9 @@ export default function Pricing({ db, erp, user }) {
       dataIndex: "product",
       key: "product",
       width: 320,
-      render: (product) => <Text className="pricing-product-name">{product}</Text>,
+      render: (product) => (
+        <Text className="pricing-product-name">{product}</Text>
+      ),
     },
     {
       title: "Old",
@@ -383,7 +411,9 @@ export default function Pricing({ db, erp, user }) {
       key: "old",
       align: "right",
       width: 130,
-      render: (oldPrice) => <Text type="secondary">{formatCurrency(oldPrice)}</Text>,
+      render: (oldPrice) => (
+        <Text type="secondary">{formatCurrency(oldPrice)}</Text>
+      ),
     },
     {
       title: "New",
@@ -449,12 +479,7 @@ export default function Pricing({ db, erp, user }) {
 
   return (
     <ConfigProvider theme={pricingAntTheme}>
-      <div className="page-header">
-        <h1 className="page-title">Pricing Control</h1>
-        <p className="page-description">
-          Manage product rates and track historical price variations.
-        </p>
-      </div>
+      <div className="page-header" />
 
       <div className="pricing-page">
         <Card
@@ -465,11 +490,19 @@ export default function Pricing({ db, erp, user }) {
               <span>Price Control</span>
             </Space>
           }
+          extra={
+            <Input.Search
+              placeholder="Search product by name or code"
+              allowClear
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ width: 320 }}
+            />
+          }
         >
           <Table
             rowKey="id"
             columns={productColumns}
-            dataSource={products}
+            dataSource={filteredProducts}
             size="small"
             pagination={{ pageSize: 8, showSizeChanger: false }}
             scroll={{ x: 950 }}
