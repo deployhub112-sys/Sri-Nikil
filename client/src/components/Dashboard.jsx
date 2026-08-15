@@ -13,6 +13,8 @@ import {
   Progress,
   Empty,
   Typography,
+  ConfigProvider,
+  theme as antdTheme,
 } from "antd";
 import {
   DollarOutlined,
@@ -377,6 +379,39 @@ export default function Dashboard({ db, erp, user }) {
   const [refillProduct, setRefillProduct] = useState(null);
   const [isRefilling, setIsRefilling] = useState(false);
   const [refillForm] = Form.useForm();
+
+  const isDarkTheme = effectiveTheme === "dark";
+  const dashboardAntTheme = useMemo(
+    () => ({
+      algorithm: isDarkTheme ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
+      token: {
+        borderRadius: 6,
+        colorBgBase: isDarkTheme ? "#111827" : "#ffffff",
+        colorBgContainer: isDarkTheme ? "#1e293b" : "#ffffff",
+        colorBgElevated: isDarkTheme ? "#1e293b" : "#ffffff",
+        colorBorder: isDarkTheme ? "#30394d" : "#e2e5ea",
+        colorText: isDarkTheme ? "#f1f5f9" : "#111827",
+        colorTextSecondary: isDarkTheme ? "#94a3b8" : "#64748b",
+      },
+      components: {
+        Card: { colorBgContainer: isDarkTheme ? "#1e293b" : "#ffffff" },
+        Modal: {
+          contentBg: isDarkTheme ? "#1e293b" : "#ffffff",
+          headerBg: isDarkTheme ? "#1e293b" : "#ffffff",
+          footerBg: isDarkTheme ? "#1e293b" : "#ffffff",
+        },
+        Table: {
+          headerBg: isDarkTheme ? "#111827" : "#f8fafc",
+          rowHoverBg: isDarkTheme ? "#334155" : "#f1f5f9",
+        },
+        InputNumber: {
+          activeBg: isDarkTheme ? "#0f172a" : "#ffffff",
+          colorBgContainer: isDarkTheme ? "#0f172a" : "#ffffff",
+        }
+      },
+    }),
+    [isDarkTheme],
+  );
 
   const canManageAdminPages = hasAdminAccess(user);
   const isAdmin = isRole(user, USER_ROLES.ADMIN);
@@ -756,7 +791,8 @@ export default function Dashboard({ db, erp, user }) {
   ];
 
   return (
-    <div className="dashboard-antd-wrap">
+    <ConfigProvider theme={dashboardAntTheme}>
+      <div className="dashboard-antd-wrap">
       {/* Page header */}
       <div className="page-header" />
 
@@ -1128,6 +1164,7 @@ export default function Dashboard({ db, erp, user }) {
           className="dashboard-antd-table"
         />
       </Modal>
-    </div>
+        </div>
+    </ConfigProvider>
   );
 }
