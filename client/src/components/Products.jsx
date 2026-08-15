@@ -359,7 +359,9 @@ export default function Products({ db, erp, user }) {
                     type="text"
                     icon={<DeleteOutlined />}
                     loading={deletingId === product.id}
-                  />
+                  >
+                    Delete
+                  </Button>
                 </Tooltip>
               </Popconfirm>
             ),
@@ -469,7 +471,9 @@ export default function Products({ db, erp, user }) {
                                   type="text"
                                   icon={<DeleteOutlined />}
                                   loading={deletingId === p.id}
-                                />
+                                >
+                                  Delete
+                                </Button>
                               </Tooltip>
                             </Popconfirm>,
                           ]
