@@ -301,7 +301,8 @@ function getSmtpConfig() {
     ''
   ).trim();
   const pass = String(process.env.SMTP_PASS || process.env.SMTP_PASSWORD || process.env.MAIL_APP_PASSWORD || process.env.MAIL_PASSWORD || '').trim();
-  const from = String(process.env.SMTP_FROM || process.env.MAIL_FROM || user).trim();
+  const rawFrom = String(process.env.SMTP_FROM || process.env.MAIL_FROM || user).trim();
+  const from = rawFrom.includes('<') ? rawFrom : `"Sri Nikil ERP" <${rawFrom}>`;
   const secure = String(process.env.SMTP_SECURE || '').trim().toLowerCase() === 'true' || port === 465;
 
   if (!host || !port || !user || !pass || !from) {
@@ -328,6 +329,8 @@ async function sendShiftReportEmail({ recipient, subject, text, html, attachment
 
   return transporter.sendMail({
     from: smtpConfig.from,
+    replyTo: smtpConfig.from,
+    messageId: `<${Date.now()}-${crypto.randomBytes(4).toString('hex')}@${smtpConfig.host.replace(/^smtp\./, '')}>`,
     to: recipient,
     subject,
     text,
@@ -444,7 +447,13 @@ function buildShiftReportEmail({ report, shopName, paymentBreakdown, itemSummary
     })
     .join('');
 
-  const html = `
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
     <div style="font-family:Arial,sans-serif;color:#111827;line-height:1.45">
       <h2 style="margin:0 0 8px">${escapeHtml(shopName)} - Shift Report</h2>
       <p style="margin:0 0 16px;color:#4b5563">Generated automatically when shift ended. Excel attachment includes the full 4 worksheet report.</p>
@@ -486,6 +495,8 @@ function buildShiftReportEmail({ report, shopName, paymentBreakdown, itemSummary
         <tbody>${stockRows || '<tr><td colspan="8">No stock details available</td></tr>'}</tbody>
       </table>
     </div>
+</body>
+</html>
   `;
 
   const text = [
