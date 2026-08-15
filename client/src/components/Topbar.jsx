@@ -305,7 +305,7 @@ function isClearedSessionError(error) {
 
 function getEndShiftMessage(response) {
   if (response?.emailStatus === 'sent' && response?.attachmentCount > 0) {
-    return `Shift closed and report sent successfully. Excel attached: ${response.attachmentName || 'Shift report'}`;
+    return 'Shift closed and report sent successfully.';
   }
 
   if (response?.emailStatus === 'failed' && response?.emailError) {
@@ -333,6 +333,11 @@ export default function Topbar({ user, roleLayout, erp, session, setUser, setSes
     const id = window.setInterval(() => setCurrentTime(Date.now()), 1000);
     return () => window.clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    setShiftActive(Boolean(user?.loginTime));
+    setCurrentTime(Date.now());
+  }, [user?.user, user?.role, user?.loginTime]);
 
   useEffect(() => {
     if (!shiftActive || !user?.loginTime) return;
@@ -426,10 +431,15 @@ export default function Topbar({ user, roleLayout, erp, session, setUser, setSes
       setUser(closedUser);
       localStorage.setItem('sri_nikil_user', JSON.stringify(closedUser));
       setSession(null);
-      setCanStartNextShift(Boolean(response?.promptNextShift));
-      alert(getEndShiftMessage(response));
-      
       const lowerRole = normalizeRole(user?.role);
+      const shouldPromptNextShift = response?.promptNextShift || lowerRole === USER_ROLES.STAFF;
+      setCanStartNextShift(Boolean(shouldPromptNextShift));
+
+      if (shouldPromptNextShift) {
+        setShowNextShiftPrompt(true);
+      } else {
+        alert(getEndShiftMessage(response));
+      }
 
       // Refresh the local App state so Today Bills and Sales immediately become 0
       // User wanted this to only happen for Admins (avoid "admin maari dashboard changes")
@@ -448,9 +458,7 @@ export default function Topbar({ user, roleLayout, erp, session, setUser, setSes
         setShiftActive(true);
       }
 
-      if (response?.promptNextShift || lowerRole === USER_ROLES.STAFF) {
-        startNextShift();
-      } else {
+      if (!shouldPromptNextShift) {
         if (lowerRole === USER_ROLES.MANAGER && onLogout) onLogout();
       }
     } catch (error) {

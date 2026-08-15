@@ -538,6 +538,7 @@ function App() {
 
   useEffect(() => {
     if (!isLoggedIn || !user?.user || !user?.role) return;
+    if (normalizeRole(user.role) === USER_ROLES.ADMIN) return;
 
     let isMounted = true;
     const userName = user.user;
@@ -659,7 +660,12 @@ function App() {
         );
         let shiftResult = null;
 
-        if (existingShift && existingShift.success && existingShift.active) {
+        if (
+          lowerRole !== USER_ROLES.ADMIN &&
+          existingShift &&
+          existingShift.success &&
+          existingShift.active
+        ) {
           shiftResult = existingShift;
         } else if (
           lowerRole === USER_ROLES.STAFF ||

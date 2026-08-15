@@ -224,6 +224,12 @@ const sidebarStyles = `
   color: var(--red) !important;
 }
 
+.app-sidebar-logout.ant-btn:hover,
+.app-sidebar-logout.ant-btn:focus {
+  background: var(--danger-soft) !important;
+  color: var(--red) !important;
+}
+
 .app-sidebar.ant-layout-sider-collapsed .app-sidebar-logout.ant-btn {
   height: 40px;
   width: 40px;
@@ -246,6 +252,41 @@ const sidebarStyles = `
 :root[data-theme='dark'] .app-sidebar-menu .ant-menu-item-selected:hover {
   background: var(--accent) !important;
   color: #111827 !important;
+}
+
+:root[data-theme='dark'] .app-sidebar-logout.ant-btn:hover,
+:root[data-theme='dark'] .app-sidebar-logout.ant-btn:focus {
+  background: rgba(248, 113, 113, 0.14) !important;
+  color: #fca5a5 !important;
+}
+
+:root[data-theme='dark'] body .ant-popover .ant-popover-inner {
+  background: #1f2635 !important;
+  border: 1px solid #30394d !important;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.38) !important;
+}
+
+:root[data-theme='dark'] body .ant-popover .ant-popover-arrow::before,
+:root[data-theme='dark'] body .ant-popover .ant-popover-arrow::after {
+  background: #1f2635 !important;
+}
+
+:root[data-theme='dark'] body .ant-popover .ant-popconfirm-title,
+:root[data-theme='dark'] body .ant-popover .ant-popconfirm-description {
+  color: #f8fafc !important;
+}
+
+:root[data-theme='dark'] body .ant-popover .ant-btn-default {
+  background: #171d2a !important;
+  border-color: #465168 !important;
+  color: #f8fafc !important;
+}
+
+:root[data-theme='dark'] body .ant-popover .ant-btn-default:hover,
+:root[data-theme='dark'] body .ant-popover .ant-btn-default:focus {
+  background: #293244 !important;
+  border-color: #64748b !important;
+  color: #ffffff !important;
 }
 
 @media (max-width: 900px) {

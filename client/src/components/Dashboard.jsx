@@ -155,7 +155,15 @@ const dashboardChartEmptyStyles = `
   color: var(--text2, #64748b) !important;
 }
 
+.dashboard-time-text.ant-typography {
+  color: var(--text2, #64748b) !important;
+}
+
 :root[data-theme='dark'] .dashboard-chart-empty .ant-empty-description {
+  color: #cbd5e1 !important;
+}
+
+:root[data-theme='dark'] .dashboard-time-text.ant-typography {
   color: #cbd5e1 !important;
 }
 
@@ -669,7 +677,7 @@ export default function Dashboard({ db, erp, user }) {
       dataIndex: "date",
       key: "date",
       render: (v) => (
-        <Text type="secondary" style={{ fontSize: "0.8rem" }}>
+        <Text className="dashboard-time-text" style={{ fontSize: "0.8rem" }}>
           {new Date(v).toLocaleTimeString()}
         </Text>
       ),
@@ -697,7 +705,7 @@ export default function Dashboard({ db, erp, user }) {
       key: "date",
       align: "right",
       render: (v) => (
-        <Text type="secondary" style={{ fontSize: "0.8rem" }}>
+        <Text className="dashboard-time-text" style={{ fontSize: "0.8rem" }}>
           {new Date(v).toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",

@@ -467,7 +467,7 @@ export default function Billing({ erp, user }) {
 <head>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: 'Times New Roman', serif; width: 760px; margin: 0 auto; padding: 18px; color: #1f2a44; font-size: 15px; line-height: 1.25; }
+    body { font-family: 'Times New Roman', serif; width: 100%; max-width: 760px; margin: 0 auto; padding: 18px; color: #1f2a44; font-size: 15px; line-height: 1.25; }
     .invoice { border: 2px solid #324f86; padding: 14px 18px 20px; }
     .invoice-title { text-align: center; font-size: 26px; font-weight: 700; text-decoration: underline; letter-spacing: 1px; margin-bottom: 10px; }
     .top-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 10px; }
@@ -480,20 +480,21 @@ export default function Billing({ erp, user }) {
     .to-line-label { min-width: 32px; font-weight: 700; }
     .to-line-value { flex: 1; border-bottom: 2px dotted #324f86; padding: 0 0 4px; min-height: 28px; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 0; table-layout: fixed; }
-    th, td { border: 2px solid #324f86; padding: 8px 10px; vertical-align: top; }
+    th, td { border: 2px solid #324f86; padding: 8px 10px; vertical-align: top; overflow-wrap: break-word; }
     th { text-align: center; font-size: 16px; font-weight: 700; }
-    .col-rate { width: 110px; text-align: right; }
-    .col-item { width: auto; }
-    .col-qty { width: 90px; text-align: center; }
-    .col-amount { width: 140px; text-align: right; }
-    .item-cell { min-height: 320px; }
+    .col-rate { width: 28%; text-align: right; }
+    .col-item { width: 32%; }
+    .col-qty { width: 12%; text-align: center; }
+    .col-amount { width: 28%; text-align: right; }
+    .item-cell { min-height: 320px; white-space: normal; word-break: break-word; }
     .item-line { margin-bottom: 6px; }
     .qty-cell { text-align: center; font-size: 20px; }
     .money { text-align: right; white-space: nowrap; }
-    .summary-wrap { display: flex; justify-content: space-between; align-items: flex-end; gap: 18px; margin-top: 8px; }
-    .summary-left { font-size: 17px; min-width: 140px; }
-    .summary-right { margin-left: auto; min-width: 260px; }
-    .summary-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #9aa8c7; }
+    .summary-wrap { display: grid; grid-template-columns: minmax(90px, 1fr) minmax(0, 58%); align-items: end; gap: 14px; margin-top: 8px; width: 100%; }
+    .summary-left { font-size: 17px; min-width: 0; }
+    .summary-right { min-width: 0; width: 100%; }
+    .summary-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 4px 0; border-bottom: 1px solid #9aa8c7; }
+    .summary-row span:last-child { text-align: right; white-space: nowrap; }
     .summary-row.total { font-size: 24px; font-weight: 700; border-bottom: 0; padding-top: 8px; }
     .footer-row { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 28px; }
     .footer-left { font-size: 18px; }
@@ -526,6 +527,12 @@ export default function Billing({ erp, user }) {
       <div class="to-line-value">${billData.customer || ""}</div>
     </div>
     <table>
+      <colgroup>
+        <col class="col-rate" />
+        <col class="col-item" />
+        <col class="col-qty" />
+        <col class="col-amount" />
+      </colgroup>
       <tr>
         <th class="col-rate">Rate</th>
         <th class="col-item">Description</th>
@@ -533,16 +540,16 @@ export default function Billing({ erp, user }) {
         <th class="col-amount">Amount</th>
       </tr>
       <tr>
-        <td class="money">
+        <td class="money col-rate">
           ${billItems.map((item) => `<div class="item-line">${Number(item.price || 0).toFixed(2)}</div>`).join("")}
         </td>
-        <td class="item-cell">
+        <td class="item-cell col-item">
           ${billItems.map((item) => `<div class="item-line">${item.name}</div>`).join("")}
         </td>
-        <td class="qty-cell">
+        <td class="qty-cell col-qty">
           ${billItems.map((item) => `<div class="item-line">${item.qty}</div>`).join("")}
         </td>
-        <td class="money">
+        <td class="money col-amount">
           ${billItems.map((item) => `<div class="item-line">${Number(item.total || 0).toFixed(2)}</div>`).join("")}
         </td>
       </tr>
