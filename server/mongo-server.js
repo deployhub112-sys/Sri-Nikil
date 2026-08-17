@@ -84,6 +84,8 @@ const DEFAULT_ACCOUNTS = [
   },
 ];
 
+const BILL_RETENTION_YEARS = 4;
+
 const client = new MongoClient(mongoUri);
 let db;
 
@@ -227,6 +229,21 @@ function toNumber(value, fallback = 0) {
 
 function nonNegativeNumber(value, fallback = 0) {
   return Math.max(0, toNumber(value, fallback));
+}
+
+function asValidDate(value, fallback = new Date()) {
+  const date = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(date.getTime()) ? fallback : date;
+}
+
+function addYears(date, years) {
+  const next = new Date(date);
+  next.setFullYear(next.getFullYear() + years);
+  return next;
+}
+
+function getBillExpiryDate(billDate) {
+  return addYears(asValidDate(billDate), BILL_RETENTION_YEARS);
 }
 
 function normalizeProduct(product) {
@@ -622,6 +639,27 @@ async function syncShiftLoginLogs() {
   await syncCounter('login_logs', 'login_logs');
 }
 
+async function ensureBillExpiryDates() {
+  const billsMissingExpiry = await c('bills')
+    .find(
+      { expires_at: { $exists: false } },
+      { projection: { id: 1, date: 1, created_at: 1 } },
+    )
+    .toArray();
+
+  for (const bill of billsMissingExpiry) {
+    const billDate = asValidDate(bill.date || bill.created_at);
+    await c('bills').updateOne(
+      { _id: bill._id },
+      { $set: { expires_at: getBillExpiryDate(billDate) } },
+    );
+  }
+}
+
+async function deleteExpiredBills() {
+  await c('bills').deleteMany({ expires_at: { $lte: new Date() } });
+}
+
 function normalizeBillItems(rawItems) {
   if (Array.isArray(rawItems)) return rawItems;
   if (typeof rawItems === 'string') {
@@ -658,6 +696,7 @@ async function initializeMongo() {
     c('products').createIndex({ id: 1 }, { unique: true }),
     c('products').createIndex({ code: 1 }, { unique: true, sparse: true }),
     c('bills').createIndex({ id: 1 }, { unique: true }),
+    c('bills').createIndex({ expires_at: 1 }, { expireAfterSeconds: 0 }),
     c('sales').createIndex({ id: 1 }, { unique: true }),
     c('customers').createIndex({ phone: 1 }, { unique: true, sparse: true }),
     c('refills').createIndex({ id: 1 }, { unique: true }),
@@ -689,6 +728,9 @@ async function initializeMongo() {
 
   await ensureDefaultAccounts();
 
+  await ensureBillExpiryDates();
+  await deleteExpiredBills();
+
   await syncShiftLoginLogs();
 }
 
@@ -700,6 +742,7 @@ app.get('/api/db', async (req, res, next) => {
   try {
     await syncShiftLoginLogs();
     await clampProductInventory();
+    await deleteExpiredBills();
     const [products, bills, sales, customers, refills, priceHistory, loginLogs, accounts, settings] = await Promise.all([
       c('products').find().sort({ id: 1 }).toArray(),
       c('bills').find().sort({ date: -1 }).toArray(),
@@ -799,6 +842,7 @@ app.put('/api/products/:id/price', async (req, res, next) => {
 
 app.get('/api/bills', async (req, res, next) => {
   try {
+    await deleteExpiredBills();
     res.json(serializeMany(await c('bills').find().sort({ date: -1 }).toArray()));
   } catch (error) {
     next(error);
@@ -830,6 +874,7 @@ app.post('/api/bills', async (req, res, next) => {
     }
 
     const existingBills = await c('bills').find({}, { projection: { billNo: 1, bill_no: 1 } }).toArray();
+    const billDate = req.body.date ? asValidDate(req.body.date) : new Date();
     const bill = {
       ...req.body,
       id: await nextId('bills'),
@@ -842,7 +887,8 @@ app.post('/api/bills', async (req, res, next) => {
       grand: toNumber(req.body.grand),
       by: req.body.by || req.body.by_user || 'system',
       by_user: req.body.by || req.body.by_user || 'system',
-      date: req.body.date ? new Date(req.body.date) : new Date(),
+      date: billDate,
+      expires_at: getBillExpiryDate(billDate),
       created_at: new Date(),
     };
     await c('bills').insertOne(bill);
