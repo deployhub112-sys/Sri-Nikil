@@ -24,6 +24,29 @@ import {
 } from "./utils/roles";
 import { canRoleOpenPage, getRoleLayout } from "./config/roleLayouts";
 
+const LOGIN_STORAGE_KEY = "sri_nikil_user";
+const TOKEN_STORAGE_KEY = "sri_nikil_token";
+const SESSION_STORAGE_KEY = "sri_nikil_session";
+const CURRENT_PAGE_STORAGE_KEY = "sri_nikil_current_page";
+const LOGIN_HEARTBEAT_STORAGE_KEY = "sri_nikil_login_heartbeat";
+const LOGOUT_AFTER_STORAGE_KEY = "sri_nikil_logout_after";
+const TAB_CLOSE_LOGOUT_DELAY_MS = 60 * 1000;
+const LOGIN_HEARTBEAT_INTERVAL_MS = 15 * 1000;
+
+function clearStoredLogin() {
+  localStorage.removeItem(LOGIN_STORAGE_KEY);
+  localStorage.removeItem(TOKEN_STORAGE_KEY);
+  localStorage.removeItem(SESSION_STORAGE_KEY);
+  localStorage.removeItem(CURRENT_PAGE_STORAGE_KEY);
+  localStorage.removeItem(LOGIN_HEARTBEAT_STORAGE_KEY);
+  localStorage.removeItem(LOGOUT_AFTER_STORAGE_KEY);
+}
+
+function hasExpiredTabCloseLogin() {
+  const logoutAfter = Number(localStorage.getItem(LOGOUT_AFTER_STORAGE_KEY) || 0);
+  return logoutAfter > 0 && Date.now() >= logoutAfter;
+}
+
 const mobileResponsiveStyles = `
 @media (max-width: 900px) {
   html,
@@ -452,6 +475,88 @@ if (
   document.head.appendChild(style);
 }
 
+const tableHeaderAccentStyles = `
+body .content .ant-table-wrapper,
+body .content .table-wrap,
+body .content .data-table {
+  box-sizing: border-box !important;
+  padding-top: 12px !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+}
+
+body .content .ant-table-wrapper .ant-table-container,
+body .content .ant-table-wrapper .ant-table-content {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+
+body .ant-table-wrapper .ant-table-thead > tr > th,
+body .ant-table-wrapper .ant-table-thead > tr > th.ant-table-column-sort,
+body .ant-table-wrapper .ant-table-thead > tr > th.ant-table-column-has-sorters:hover,
+body .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell-scrollbar,
+.content table > thead > tr > th,
+.content .data-table th {
+  background: var(--accent) !important;
+  border-bottom-color: var(--accent) !important;
+  color: #ffffff !important;
+}
+
+body .ant-table-wrapper .ant-table-thead > tr > th:first-child,
+.content table > thead > tr > th:first-child {
+  border-top-left-radius: 8px !important;
+  border-bottom-left-radius: 8px !important;
+}
+
+body .ant-table-wrapper .ant-table-thead > tr > th:last-child,
+.content table > thead > tr > th:last-child {
+  border-top-right-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+}
+
+body .ant-table-wrapper .ant-table-thead > tr > th::before {
+  background-color: rgba(255, 255, 255, 0.28) !important;
+}
+
+body .ant-table-wrapper .ant-table-thead > tr > th .ant-table-column-sorter,
+body .ant-table-wrapper .ant-table-thead > tr > th .ant-table-filter-trigger,
+body .ant-table-wrapper .ant-table-thead > tr > th .ant-table-filter-column-title {
+  color: inherit !important;
+}
+
+:root[data-theme='dark'] body .ant-table-wrapper .ant-table-thead > tr > th,
+:root[data-theme='dark'] body .ant-table-wrapper .ant-table-thead > tr > th.ant-table-column-sort,
+:root[data-theme='dark'] body .ant-table-wrapper .ant-table-thead > tr > th.ant-table-column-has-sorters:hover,
+:root[data-theme='dark'] body .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell-scrollbar,
+:root[data-theme='dark'] .content table > thead > tr > th,
+:root[data-theme='dark'] .content .data-table th {
+  background: var(--accent) !important;
+  border-bottom-color: var(--accent) !important;
+  color: #111827 !important;
+}
+
+@media (max-width: 640px) {
+  body .content .ant-table-wrapper,
+  body .content .table-wrap,
+  body .content .data-table {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    padding-top: 8px !important;
+  }
+}
+`;
+
+if (
+  typeof document !== "undefined" &&
+  !document.getElementById("table-header-accent-styles")
+) {
+  const style = document.createElement("style");
+  style.id = "table-header-accent-styles";
+  style.textContent = tableHeaderAccentStyles;
+  document.head.appendChild(style);
+}
+
 // Memoize page components outside render loop to maintain component identities
 const Dashboard = React.memo(DashboardPage);
 const Billing = React.memo(BillingPage);
@@ -475,16 +580,21 @@ function resolvePageForRole(page, user) {
 
 function App() {
   const [currentPage, setCurrentPage] = useState(() => {
-    return localStorage.getItem("sri_nikil_current_page") || "dashboard";
+    return localStorage.getItem(CURRENT_PAGE_STORAGE_KEY) || "dashboard";
   });
   const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem("sri_nikil_user");
+    if (hasExpiredTabCloseLogin()) {
+      clearStoredLogin();
+      return null;
+    }
+
+    const saved = localStorage.getItem(LOGIN_STORAGE_KEY);
     if (!saved) return null;
     try {
       const parsed = JSON.parse(saved);
       if (parsed && !parsed.loginTime) {
         parsed.loginTime = new Date().toISOString();
-        localStorage.setItem("sri_nikil_user", JSON.stringify(parsed));
+        localStorage.setItem(LOGIN_STORAGE_KEY, JSON.stringify(parsed));
       }
       return parsed;
     } catch {
@@ -492,10 +602,20 @@ function App() {
     }
   });
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return localStorage.getItem("sri_nikil_user") !== null;
+    if (hasExpiredTabCloseLogin()) {
+      clearStoredLogin();
+      return false;
+    }
+
+    return localStorage.getItem(LOGIN_STORAGE_KEY) !== null;
   });
   const [session, setSession] = useState(() => {
-    const saved = localStorage.getItem("sri_nikil_session");
+    if (hasExpiredTabCloseLogin()) {
+      clearStoredLogin();
+      return null;
+    }
+
+    const saved = localStorage.getItem(SESSION_STORAGE_KEY);
     if (!saved) return null;
     try {
       return JSON.parse(saved);
@@ -530,9 +650,9 @@ function App() {
 
   useEffect(() => {
     if (session) {
-      localStorage.setItem("sri_nikil_session", JSON.stringify(session));
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
     } else {
-      localStorage.removeItem("sri_nikil_session");
+      localStorage.removeItem(SESSION_STORAGE_KEY);
     }
   }, [session]);
 
@@ -566,7 +686,7 @@ function App() {
               };
               setUser(updatedUser);
               localStorage.setItem(
-                "sri_nikil_user",
+                LOGIN_STORAGE_KEY,
                 JSON.stringify(updatedUser),
               );
             }
@@ -596,7 +716,7 @@ function App() {
               };
               setUser(updatedUser);
               localStorage.setItem(
-                "sri_nikil_user",
+                LOGIN_STORAGE_KEY,
                 JSON.stringify(updatedUser),
               );
             }
@@ -613,18 +733,10 @@ function App() {
     return () => {
       isMounted = false;
     };
-  }, [
-    isLoggedIn,
-    user?.user,
-    user?.role,
-    user?.loginTime,
-    session?.id,
-    session?.loginTime,
-    erp.getActiveShift,
-  ]);
+  }, [isLoggedIn, user, session, erp]);
 
   useEffect(() => {
-    localStorage.setItem("sri_nikil_current_page", currentPage);
+    localStorage.setItem(CURRENT_PAGE_STORAGE_KEY, currentPage);
   }, [currentPage]);
 
   const handleLogin = async (username, password, expectedRole) => {
@@ -643,14 +755,14 @@ function App() {
       const userWithSession = { ...userData, loginTime: defaultLoginTime };
 
       if (userData.token) {
-        localStorage.setItem("sri_nikil_token", userData.token);
+        localStorage.setItem(TOKEN_STORAGE_KEY, userData.token);
       }
 
       setUser(userWithSession);
       setIsLoggedIn(true);
       setSelectedLoginRole(null);
       setCurrentPage(getDefaultPageForRole(userData.role));
-      localStorage.setItem("sri_nikil_user", JSON.stringify(userWithSession));
+      localStorage.setItem(LOGIN_STORAGE_KEY, JSON.stringify(userWithSession));
 
       const lowerRole = normalizeRole(userData.role);
       try {
@@ -685,7 +797,7 @@ function App() {
             loginTime: actualShiftStart,
           };
           setUser(updatedUser);
-          localStorage.setItem("sri_nikil_user", JSON.stringify(updatedUser));
+          localStorage.setItem(LOGIN_STORAGE_KEY, JSON.stringify(updatedUser));
 
           if (shiftResult.sessionId || existingShift?.sessionId) {
             setSession({
@@ -712,10 +824,70 @@ function App() {
     setIsLoggedIn(false);
     setSession(null);
     setSelectedLoginRole(null);
-    localStorage.removeItem("sri_nikil_user");
-    localStorage.removeItem("sri_nikil_token");
-    localStorage.removeItem("sri_nikil_current_page");
+    clearStoredLogin();
   }, []);
+
+  useEffect(() => {
+    if (!isLoggedIn || !user) return;
+
+    let logoutTimer = null;
+
+    const writeHeartbeat = () => {
+      localStorage.setItem(LOGIN_HEARTBEAT_STORAGE_KEY, String(Date.now()));
+      localStorage.removeItem(LOGOUT_AFTER_STORAGE_KEY);
+    };
+
+    const scheduleLogoutCheck = () => {
+      if (logoutTimer) {
+        window.clearTimeout(logoutTimer);
+        logoutTimer = null;
+      }
+
+      const logoutAfter = Number(localStorage.getItem(LOGOUT_AFTER_STORAGE_KEY) || 0);
+      if (!logoutAfter) return;
+
+      const remainingMs = logoutAfter - Date.now();
+      if (remainingMs <= 0) {
+        void handleLogout();
+        return;
+      }
+
+      logoutTimer = window.setTimeout(() => {
+        if (hasExpiredTabCloseLogin()) {
+          void handleLogout();
+        }
+      }, remainingMs);
+    };
+
+    const markClosedLogoutDeadline = () => {
+      localStorage.setItem(
+        LOGOUT_AFTER_STORAGE_KEY,
+        String(Date.now() + TAB_CLOSE_LOGOUT_DELAY_MS),
+      );
+    };
+
+    const handleStorageChange = (event) => {
+      if (event.key === LOGOUT_AFTER_STORAGE_KEY) {
+        scheduleLogoutCheck();
+      }
+    };
+
+    writeHeartbeat();
+    const heartbeatInterval = window.setInterval(
+      writeHeartbeat,
+      LOGIN_HEARTBEAT_INTERVAL_MS,
+    );
+
+    window.addEventListener("pagehide", markClosedLogoutDeadline);
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.clearInterval(heartbeatInterval);
+      if (logoutTimer) window.clearTimeout(logoutTimer);
+      window.removeEventListener("pagehide", markClosedLogoutDeadline);
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [handleLogout, isLoggedIn, user]);
 
   // State-slice database selectors to prevent unnecessary component updates
   const dashboardDb = useMemo(

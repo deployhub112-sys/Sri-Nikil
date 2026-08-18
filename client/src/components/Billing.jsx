@@ -193,6 +193,7 @@ export default function Billing({ erp, user }) {
   const [viewBill, setViewBill] = useState(null);
   const [isReviewMode, setIsReviewMode] = useState(false);
   const [showProductPopup, setShowProductPopup] = useState(false);
+  const [productPopupMode, setProductPopupMode] = useState("select");
   const [searchTerm, setSearchTerm] = useState("");
   const [qty, setQty] = useState(1);
   const [selectedProducts, setSelectedProducts] = useState({});
@@ -352,12 +353,34 @@ export default function Billing({ erp, user }) {
     })
     .slice(0, 80);
 
-  const openProductPopup = async () => {
-    setShowProductPopup(true);
+  const refreshProductsForPopup = async () => {
     try {
       await erp.fetchProducts(true);
     } catch (error) {
       showToast(error.message || "Failed to fetch latest stock", "error");
+    }
+  };
+
+  const openProductPopup = async () => {
+    setProductPopupMode("select");
+    setSearchTerm("");
+    setShowProductPopup(true);
+    await refreshProductsForPopup();
+  };
+
+  const handleProductSearchChange = (event) => {
+    const nextSearchTerm = event.target.value;
+    setSearchTerm(nextSearchTerm);
+    setProductPopupMode("search");
+
+    if (nextSearchTerm.trim()) {
+      setShowProductPopup(true);
+      if (!showProductPopup) {
+        void refreshProductsForPopup();
+      }
+    } else if (productPopupMode === "search") {
+      setShowProductPopup(false);
+      setSelectedProducts({});
     }
   };
 
@@ -970,11 +993,10 @@ export default function Billing({ erp, user }) {
               }
             >
               <Input
-                readOnly
                 prefix={<SearchOutlined />}
-                placeholder="Click to select products..."
+                placeholder="Search products..."
                 value={searchTerm}
-                onClick={openProductPopup}
+                onChange={handleProductSearchChange}
                 className="billing-product-trigger"
               />
 
@@ -1212,7 +1234,7 @@ export default function Billing({ erp, user }) {
         </Modal>
 
         <Modal
-          title="Select Products"
+          title={productPopupMode === "search" ? "Search Products" : "Select Products"}
           open={showProductPopup}
           onCancel={() => {
             setShowProductPopup(false);
@@ -1235,7 +1257,14 @@ export default function Billing({ erp, user }) {
             prefix={<SearchOutlined />}
             placeholder="Search by name or code..."
             value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
+            onChange={(event) => {
+              const nextSearchTerm = event.target.value;
+              setSearchTerm(nextSearchTerm);
+              if (productPopupMode === "search" && !nextSearchTerm.trim()) {
+                setShowProductPopup(false);
+                setSelectedProducts({});
+              }
+            }}
             className="billing-product-search"
           />
 

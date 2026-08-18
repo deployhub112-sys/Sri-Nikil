@@ -39,6 +39,17 @@ if (
 }
 
 const stockMobileCompactStyles = `
+.stock-refill-card .ant-table-thead > tr > th {
+  height: 52px !important;
+  padding: 14px 24px !important;
+  vertical-align: middle !important;
+}
+
+.stock-refill-card .ant-table-tbody > tr > td {
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+}
+
 @media (max-width: 768px) {
   .stock-table-card .ant-table-measure-row,
   .stock-table-card .ant-table-measure-row td {
@@ -129,8 +140,8 @@ const stockMobileCompactStyles = `
   }
 
   .stock-refill-card .ant-table-thead > tr > th {
-    height: 40px !important;
-    padding-block: 8px !important;
+    height: 48px !important;
+    padding: 12px 14px !important;
   }
 }
 `;

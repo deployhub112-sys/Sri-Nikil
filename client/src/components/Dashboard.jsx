@@ -415,6 +415,7 @@ export default function Dashboard({ db, erp, user }) {
 
   const canManageAdminPages = hasAdminAccess(user);
   const isAdmin = isRole(user, USER_ROLES.ADMIN);
+  const isStaff = isRole(user, USER_ROLES.STAFF);
 
   const allBills = useMemo(() => db.bills || [], [db.bills]);
 
@@ -806,7 +807,7 @@ export default function Dashboard({ db, erp, user }) {
             sub={`${todayBills.length} bills today`}
             icon={<DollarOutlined style={{ fontSize: 32 }} />}
             color="orange"
-            onClick={() => setShowTodaySalesPopup(true)}
+            onClick={isStaff ? undefined : () => setShowTodaySalesPopup(true)}
           />
         </Col>
         <Col xs={24} sm={12} lg={canManageAdminPages ? 6 : 8}>
@@ -840,7 +841,7 @@ export default function Dashboard({ db, erp, user }) {
               sub={`${products.filter((p) => Number(p.stock || 0) === 0).length} out of stock`}
               icon={<WarningOutlined style={{ fontSize: 32 }} />}
               color="red"
-              onClick={() => setShowLowStockPopup(true)}
+              onClick={isStaff ? undefined : () => setShowLowStockPopup(true)}
             />
           </Col>
         )}

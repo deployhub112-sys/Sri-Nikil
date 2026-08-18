@@ -308,6 +308,25 @@ const sidebarStyles = `
     overflow: hidden;
   }
 
+  .app-sidebar-mobile-sider .ant-layout-sider-zero-width-trigger,
+  .app-sidebar-mobile-sider .ant-layout-sider-trigger {
+    background: var(--sidebar-bg) !important;
+    border: 1px solid var(--sidebar-border) !important;
+    color: var(--text) !important;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.14) !important;
+  }
+
+  .app-sidebar-mobile-sider .ant-layout-sider-zero-width-trigger:hover,
+  .app-sidebar-mobile-sider .ant-layout-sider-trigger:hover {
+    background: var(--surface-hover) !important;
+    color: var(--accent) !important;
+  }
+
+  :root[data-theme='light'] .app-sidebar-mobile-sider.ant-layout-sider,
+  :root[data-theme='light'] .app-sidebar-mobile-sider .ant-layout-sider-children {
+    background: var(--sidebar-bg) !important;
+  }
+
   .app-sidebar-mobile-sider,
   .app-sidebar-mobile-sider .ant-layout-sider-children,
   .app-sidebar-mobile-sider .ant-layout-sider-zero-width-trigger,

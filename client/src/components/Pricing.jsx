@@ -40,6 +40,20 @@ if (
 }
 
 const pricingMobileCompactStyles = `
+.pricing-page .pricing-table-card .ant-table-thead > tr > th {
+  height: 56px !important;
+  padding-top: 16px !important;
+  padding-bottom: 16px !important;
+  padding-left: 28px !important;
+  padding-right: 28px !important;
+  vertical-align: middle !important;
+}
+
+.pricing-page .pricing-table-card .ant-table-tbody > tr > td {
+  padding-left: 28px !important;
+  padding-right: 28px !important;
+}
+
 @media (max-width: 768px) {
   .pricing-table-card .ant-table-measure-row,
   .pricing-table-card .ant-table-measure-row td {
@@ -58,14 +72,16 @@ const pricingMobileCompactStyles = `
   .pricing-table-card .ant-table-tbody > tr > td {
     height: 56px !important;
     min-height: 0 !important;
-    padding: 6px 10px !important;
+    padding: 6px 14px !important;
     line-height: 1.3 !important;
     vertical-align: middle !important;
   }
 
   .pricing-table-card .ant-table-thead > tr > th {
-    height: 40px !important;
-    padding-block: 8px !important;
+    height: 48px !important;
+    padding-block: 12px !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
   }
 
   .pricing-product-cell {
