@@ -6,10 +6,13 @@ Inventory, billing, pricing, customer, sales, report, settings, and login activi
 
 ```bash
 npm install
-npm install --prefix server
+pip install -r server/requirements.txt
 ```
 
-Copy `server/.env.example` to `server/.env.development` and fill MongoDB Atlas and SMTP values.
+Copy `server/.env.example` to `server/.env.development` and fill the Supabase
+PostgreSQL connection string (`SUPABASE_DB_URL`) and SMTP values - see
+`SUPABASE_SETUP.md`. Existing MongoDB Atlas data can be migrated with
+`server/migrate_mongo_to_postgres.py` (read-only on MongoDB).
 
 ## Run
 
@@ -17,7 +20,7 @@ Copy `server/.env.example` to `server/.env.development` and fill MongoDB Atlas a
 npm run dev
 ```
 
-Client runs with Vite and the Express MongoDB API runs on `PORT` from the server env file.
+Client runs with Vite and the FastAPI Supabase (PostgreSQL) API runs on `PORT` from the server env file (`python server/run.py`).
 
 ## Build
 

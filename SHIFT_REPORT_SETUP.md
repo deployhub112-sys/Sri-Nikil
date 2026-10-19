@@ -123,7 +123,7 @@ Columns:
 
 3. **Check server logs** for detailed error
    ```
-   Look for: "Failed to end shift:"
+   Look for: "Failed to send shift report mail:"
    ```
 
 4. **Verify recipient email is set**
@@ -132,19 +132,14 @@ Columns:
    ```
 
 5. **Test direct email sending** (optional)
-   ```javascript
-   // In server terminal
-   const nodemailer = require('nodemailer');
-   const transporter = nodemailer.createTransport({
-     host: 'smtp.gmail.com',
-     port: 587,
-     secure: false,
-     auth: {
-       user: 'anithaami1208@gmail.com',
-       pass: 'YOUR_APP_PASSWORD'
-     }
-   });
-   // Try sending test email
+   ```python
+   # In server terminal
+   import smtplib
+   server = smtplib.SMTP('smtp.gmail.com', 587)
+   server.starttls()
+   server.login('anithaami1208@gmail.com', 'YOUR_APP_PASSWORD')
+   server.sendmail('anithaami1208@gmail.com', 'you@example.com', 'Subject: test\n\nHello')
+   server.quit()
    ```
 
 ## Next Shift Workflow
@@ -180,6 +175,7 @@ SHIFT_REPORT_EMAIL=anithaami1208@gmail.com
 ```
 
 **Key Files**:
-- Server: `server/mongo-server.js`
+- Server: `server/app/routers/shifts.py`
+- Excel report: `server/app/excel_report.py`
 - Client: `client/src/components/Topbar.jsx` (lines 79-110)
 - API Hook: `client/src/hooks/useERPData.js` (line 694)

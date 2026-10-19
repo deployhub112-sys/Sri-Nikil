@@ -1,0 +1,3 @@
+# Only needed to run migrate_mongo_to_postgres.py (read-only MongoDB access).
+-r requirements.txt
+pymongo>=4.9.0

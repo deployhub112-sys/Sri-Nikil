@@ -4,6 +4,12 @@
 /.pnp
 .pnp.js
 
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
 # Build output
 /dist
 /client/dist
@@ -34,6 +40,7 @@
 /server/.env.test.local
 /server/.env.production
 /server/.env.production.local
+/server/.env.migration
 !.env.example
 !/server/.env.example
 
