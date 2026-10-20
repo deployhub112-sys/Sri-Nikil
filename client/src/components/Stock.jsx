@@ -217,7 +217,7 @@ export default function Stock({ db, erp, user }) {
         : antdTheme.defaultAlgorithm,
       token: {
         borderRadius: 6,
-        colorPrimary: "#d95b3d",
+        colorPrimary: "#556ee6",
         colorBgBase: isDarkTheme ? "#111827" : "#ffffff",
         colorBgContainer: isDarkTheme ? "#1b2433" : "#ffffff",
         colorBgElevated: isDarkTheme ? "#111827" : "#ffffff",
